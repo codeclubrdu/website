@@ -1,0 +1,22 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/codeClubLogo.webp';
+---
+
+<header>
+	<div class="flex flex-row place-content-between">
+		<div class="flex=col m-5 pt-5">
+			<a href="/">home</a><br />
+			<a>events</a><br />
+			<a>recaps</a><br />
+			<a>teams</a><br />
+			<br />
+			<a href="https://discord.gg/h22edSxZdK">discord</a><br />
+			<a href="https://www.meetup.com/code-club-rdu/">meetup</a><br />
+			<a href="https://github.com/codeclubrdu">github</a><br />
+		</div>
+		<div class="mt-0 mr-5">
+			<Image src={logo} height="225" alt="Code Club logo" />
+		</div>
+	</div>
+</header>
