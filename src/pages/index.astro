@@ -1,5 +1,14 @@
 ---
 import '../styles/global.css';
+import Header from '../components/Header.astro';
+import { Image } from 'astro:assets';
+import photo from '../assets/groupPhoto.webp';
+const event = 'Fifth';
+const day = 'July 2nd';
+const time = '5:30p-7:00p';
+const place = 'Atomic Object';
+const address = '150 Fayetteville St. STE 400';
+const city = 'Raleigh, NC';
 ---
 
 <html lang="en">
@@ -12,17 +21,37 @@ import '../styles/global.css';
 		<title>Code Club RDU</title>
 	</head>
 
-	<body>
+	<body class="m-1 max-w-[550px]">
+		<Header />
 		<div class="">
-			<h1 class="mb-3 text-left text-2xl">Welcome to <b>Code Club</b> RDU's homepage</h1>
-			<div class="flex flex-col">
-				<p>Pardon the dust while we build out the website</p>
-				<p>Join our <a href="https://discord.gg/h22edSxZdK" target="_blank">Discord</a></p>
+			<h1 class="mb-0 pl-5 text-left text-2xl">Welcome to <b>Code Club</b> RDU's homepage</h1>
+			<div class="flex flex-col p-5">
 				<p>
-					You can also find us on <a href="https://www.meetup.com/code-club-rdu/" target="_blank"
-						>Meetup</a
-					>
+					We're a group of North Carolina based developers who want to hone their craft through
+					hands-on practice and collaborative learning. Whether you're self-taught, boot camp
+					trained or CS degreed, you have a place with us.
 				</p>
+				<p>Join us every first Thursday of the month to share ideas, connect, and practice</p>
+				<div class="place-self-left max-w-[550px] pt-5">
+					<Image src={photo} alt="Photo of group members" width={500} quality="mid" />
+				</div>
+				<div>
+					<p class="p-d text-left">Next Event:</p>
+					<div class="place-self-left flex flex-col border-solid border-black p-5">
+						<ul class="list-none">
+							<li class="mb-3">{event} Event:</li>
+							<li>{day}</li>
+							<li class="mb-3">{time}</li>
+							<li>{place}</li>
+							<li>{address}</li>
+							<li class="mb-3">{city}</li>
+						</ul>
+						<div class="flex flex-row justify-between">
+							<button class="h-7 w-35 bg-black text-white"> MoreInfo </button>
+							<button class="h-7 w-35 bg-black text-white"> RSVP on meetup </button>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</body>
