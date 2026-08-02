@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
-const { content } = Astro.props;
+import Header from '../components/Header.astro';
+const { title = 'Code Club RDU' } = Astro.props;
 ---
 
 <html lang="en">
@@ -9,9 +10,12 @@ const { content } = Astro.props;
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
-		<title>{content.title}</title>
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
 	</head>
-	<body>
+
+	<body class="m-1 mx-auto max-w-137.5">
+		<Header />
 		<slot />
 	</body>
 </html>
