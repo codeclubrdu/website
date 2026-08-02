@@ -1,58 +1,52 @@
 ---
-import '../styles/global.css';
-import Header from '../components/Header.astro';
+import Main from '../layouts/main.astro';
 import { Image } from 'astro:assets';
 import photo from '../assets/groupPhoto.webp';
 const event = 'Sixth';
 const day = 'August 6th';
 const time = '5:30p-7:00p';
-const place = 'Atomic Object';
-const address = '150 Fayetteville St (Suite 400)';
+const place = '150 Fayetteville - 13th Floor';
+const address = '150 Fayetteville St Floor 13';
 const city = 'Raleigh, NC';
+const meetupLink = 'https://www.meetup.com/code-club-rdu/events/315790401';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Code Club RDU</title>
-	</head>
-
-	<body class="m-1 max-w-137.5">
-		<Header />
-		<div class="">
-			<h1 class="mb-0 pl-5 text-left text-2xl">Welcome to <b>Code Club</b> RDU's homepage</h1>
-			<div class="flex flex-col p-5">
-				<p>
-					We're a group of North Carolina based developers who want to hone their craft through
-					hands-on practice and collaborative learning. Whether you're self-taught, boot camp
-					trained or CS degreed, you have a place with us.
-				</p>
-				<p>Join us every first Thursday of the month to share ideas, connect, and practice</p>
-				<div class="place-self-left max-w-137.5 pt-5">
-					<Image src={photo} alt="Photo of group members" width={500} quality="mid" />
-				</div>
-				<div>
-					<p class="p-d text-left">Next Event:</p>
-					<div class="place-self-left flex flex-col border-solid border-black p-5">
-						<ul class="list-none">
-							<li class="mb-3">{event} Event:</li>
-							<li>{day}</li>
-							<li class="mb-3">{time}</li>
-							<li>{place}</li>
-							<li>{address}</li>
-							<li class="mb-3">{city}</li>
-						</ul>
-						<div class="flex flex-row justify-between">
-							<button class="h-7 w-35 bg-black text-white"> MoreInfo </button>
-							<button class="h-7 w-35 bg-black text-white"> RSVP on meetup </button>
-						</div>
+<Main>
+	<div class="">
+		<h1 class="mb-0 pl-5 text-left text-2xl">Welcome to <b>Code Club</b> RDU's homepage</h1>
+		<div class="flex flex-col p-5">
+			<p>
+				We're a group of North Carolina based developers who want to hone their craft through
+				hands-on practice and collaborative learning. Whether you're self-taught, boot camp trained
+				or CS degreed, you have a place with us.
+			</p>
+			<p>Join us every first Thursday of the month to share ideas, connect, and practice</p>
+			<div class="place-self-left max-w-137.5 pt-5">
+				<Image src={photo} alt="Photo of group members" width={500} quality="mid" />
+			</div>
+			<div>
+				<p class="p-d text-left">Next Event:</p>
+				<div class="place-self-left flex flex-col border-solid border-black p-5">
+					<ul class="list-none p-0">
+						<li class="mb-3">{event} Event:</li>
+						<li>{day}</li>
+						<li class="mb-3">{time}</li>
+						<li>{place}</li>
+						<li>{address}</li>
+						<li class="mb-3">{city}</li>
+					</ul>
+					<div class="center flex flex-row justify-between">
+						<a
+							class="inline-flex h-7 w-35 items-center justify-center bg-black p-2 text-white"
+							href="/events">More Info</a
+						>
+						<a
+							class="inline-flex h-7 w-35 items-center justify-center bg-black p-2 text-white"
+							href={meetupLink}>RSVP on Meetup</a
+						>
 					</div>
 				</div>
 			</div>
 		</div>
-	</body>
-</html>
+	</div>
+</Main>

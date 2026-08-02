@@ -1,0 +1,84 @@
+---
+import Main from '../layouts/main.astro';
+
+type Agenda = {
+	time: string;
+	item: string;
+};
+
+type Detail = {
+	notes: string[];
+	agenda: Agenda[];
+	callToAction: string;
+};
+
+type Event = {
+	event: string;
+	day: string;
+	time: string;
+	place: string;
+	address: string;
+	city: string;
+	meetupLink: string;
+	details: Detail;
+};
+
+const events: Event[] = [
+	{
+		event: 'Sixth',
+		day: 'August 6th',
+		time: '5:30p-7:00p',
+		place: '150 Fayetteville - 13th Floor',
+		address: '150 Fayetteville St Floor 13',
+		city: 'Raleigh, NC',
+		meetupLink: 'https://www.meetup.com/code-club-rdu/events/315790401',
+		details: {
+			notes: [
+				'This meeting is hands-on-keyboard so make sure to bring your laptops!',
+				'For returning attendees we are meeting on the 13th floor, not the 4th.',
+			],
+			agenda: [
+				{ time: '5:30–5:50', item: 'Social + pizza + Find the bug challenge' },
+				{ time: '5:50–5:55', item: 'Find the bug walkthrough' },
+				{ time: '5:55–6:05', item: 'Projects kickoff' },
+				{ time: '6:05–6:55', item: 'Projects breakout' },
+				{ time: '6:55–7:00', item: 'Wrap up and group goal set' },
+			],
+			callToAction: 'Want to share something cool as a talk or lead a project? DM me!',
+		},
+	},
+];
+---
+
+<Main title="Events | Code Club RDU">
+	<h1 class="mb-0 pl-5 text-left text-2xl">Events</h1>
+	<div class="flex flex-col p-5">
+		{
+			events.map(({ event, day, time, place, address, city, details }) => {
+				return (
+					<section class="p-5">
+						<h2>
+							{event} · {day} · {time} · {place}
+						</h2>
+
+						<div>{place}</div>
+						<div>{address}</div>
+						<div class="mb-3">{city}</div>
+						{details.notes.map((n) => (
+							<p>{n}</p>
+						))}
+						<h3>Agenda</h3>
+						<ul>
+							{details.agenda.map(({ time, item }) => (
+								<li>
+									<b>{time}</b> — {item}
+								</li>
+							))}
+						</ul>
+						<p>{details.callToAction}</p>
+					</section>
+				);
+			})
+		}
+	</div>
+</Main>
