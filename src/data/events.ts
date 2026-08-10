@@ -97,7 +97,6 @@ export const events: Event[] = [
 	},
 ];
 
-// Local-time ISO date; toISOString() would be UTC and flip a day early on evening builds
 const todayISO = new Date().toLocaleDateString('sv');
 
 const isPast = (e: Event): boolean => e.date < todayISO || !!e.recap;

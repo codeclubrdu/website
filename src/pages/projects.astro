@@ -1,0 +1,81 @@
+---
+import Main from '../layouts/main.astro';
+import { currentProjects, pastProjects } from '../data/projects';
+
+const discordLink = 'https://discord.gg/h22edSxZdK';
+---
+
+<Main title="Projects | Code Club RDU">
+	<h1 class="mb-0 pl-5 text-left text-2xl">Projects</h1>
+	<div class="flex flex-col p-5">
+		<section id="what-are-projects" class="p-5">
+			<h2>What are they?</h2>
+			<p>
+				Projects are hands-on group builds we work on during meetings, with each project spanning
+				2–3 meetings. We break into groups by language; each group has a lead and its own branch in
+				the project repo on GitHub. You can jump in at any point — even mid-project!
+			</p>
+		</section>
+		<section id="projects" class="p-5">
+			<h2>Current</h2>
+			{
+				currentProjects.map(({ name, summary, languages, repoLink }) => (
+					<article class="mb-5">
+						<h3>{name}</h3>
+						<div class="mb-3">Groups: {languages.join(' · ')}</div>
+						{summary.map((paragraph) => (
+							<p>{paragraph}</p>
+						))}
+						<p>
+							Questions? Join the{' '}
+							<a class="underline" href={discordLink}>
+								Discord
+							</a>{' '}
+							and find the {name} thread.
+						</p>
+						<a
+							class="inline-flex h-7 w-35 items-center justify-center bg-black p-2 text-white"
+							href={repoLink}
+						>
+							View on GitHub
+						</a>
+					</article>
+				))
+			}
+		</section>
+		<section id="joining" class="p-5">
+			<h2>Joining mid-project</h2>
+			<p>Joining mid-project?</p>
+			<ol class="list-inside list-decimal">
+				<li>Read the project repo's README.</li>
+				<li>
+					Join the <a class="underline" href={discordLink}>Discord</a>, find the project thread, and
+					say hi — ask which team fits you.
+				</li>
+				<li>Clone the repo and get familiar with the code.</li>
+				<li>
+					Come to the <a class="underline" href="/events">next meeting</a> with your laptop!
+				</li>
+			</ol>
+		</section>
+		{
+			pastProjects.length > 0 && (
+				<section id="past-projects" class="p-5">
+					<h2>Past Projects</h2>
+					{pastProjects.map(({ name, summary, languages, repoLink }) => (
+						<article class="mb-5">
+							<h3>{name}</h3>
+							<div class="mb-3 text-neutral-500">Teams: {languages.join(' · ')}</div>
+							{summary.map((paragraph) => (
+								<p class="text-neutral-500">{paragraph}</p>
+							))}
+							<a class="text-neutral-500 underline" href={repoLink}>
+								View on GitHub
+							</a>
+						</article>
+					))}
+				</section>
+			)
+		}
+	</div>
+</Main>
