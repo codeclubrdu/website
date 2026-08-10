@@ -2,13 +2,7 @@
 import Main from '../layouts/main.astro';
 import { Image } from 'astro:assets';
 import photo from '../assets/groupPhoto.webp';
-const event = 'Sixth';
-const day = 'August 6th';
-const time = '5:30p-7:00p';
-const place = '150 Fayetteville - 13th Floor';
-const address = '150 Fayetteville St Floor 13';
-const city = 'Raleigh, NC';
-const meetupLink = 'https://www.meetup.com/code-club-rdu/events/315790401';
+import { nextEvent, formatDay } from '../data/events';
 ---
 
 <Main>
@@ -24,29 +18,39 @@ const meetupLink = 'https://www.meetup.com/code-club-rdu/events/315790401';
 			<div class="place-self-left max-w-137.5 pt-5">
 				<Image src={photo} alt="Photo of group members" width={500} quality="mid" />
 			</div>
-			<div>
-				<p class="p-d text-left">Next Event:</p>
-				<div class="place-self-left flex flex-col border-solid border-black p-5">
-					<ul class="list-none p-0">
-						<li class="mb-3">{event} Event:</li>
-						<li>{day}</li>
-						<li class="mb-3">{time}</li>
-						<li>{place}</li>
-						<li>{address}</li>
-						<li class="mb-3">{city}</li>
-					</ul>
-					<div class="center flex flex-row justify-between">
-						<a
-							class="inline-flex h-7 w-35 items-center justify-center bg-black p-2 text-white"
-							href="/events">More Info</a
-						>
-						<a
-							class="inline-flex h-7 w-35 items-center justify-center bg-black p-2 text-white"
-							href={meetupLink}>RSVP on Meetup</a
-						>
+			{
+				nextEvent ? (
+					<div>
+						<p class="p-d text-left">Next Event:</p>
+						<div class="place-self-left flex flex-col border-solid border-black p-5">
+							<ul class="list-none p-0">
+								<li class="mb-3">{nextEvent.event}:</li>
+								<li>{formatDay(nextEvent.date)}</li>
+								<li class="mb-3">{nextEvent.time}</li>
+								<li>{nextEvent.place}</li>
+								<li>{nextEvent.address}</li>
+								<li class="mb-3">{nextEvent.city}</li>
+							</ul>
+							<div class="center flex flex-row justify-between">
+								<a
+									class="inline-flex h-7 w-35 items-center justify-center bg-black p-2 text-white"
+									href="/events"
+								>
+									More Info
+								</a>
+								<a
+									class="inline-flex h-7 w-35 items-center justify-center bg-black p-2 text-white"
+									href={nextEvent.meetupLink}
+								>
+									RSVP on Meetup
+								</a>
+							</div>
+						</div>
 					</div>
-				</div>
-			</div>
+				) : (
+					<p>Next event TBA — keep an eye on our Meetup!</p>
+				)
+			}
 		</div>
 	</div>
 </Main>
