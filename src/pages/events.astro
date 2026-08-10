@@ -88,7 +88,6 @@ import { upcomingEvents, pastEvents, formatDay } from '../data/events';
 </Main>
 
 <script>
-	// Static build only reclassifies on deploy; fix any card that went stale since.
 	const today = new Date().toLocaleDateString('sv');
 	const pastList = document.querySelector('[data-past-list]');
 	document.querySelectorAll<HTMLElement>('#events [data-event-card]').forEach((card) => {
