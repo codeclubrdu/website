@@ -38,6 +38,30 @@ export const formatDay = (date: string): string => {
 
 export const events: Event[] = [
 	{
+		event: 'Event 8',
+		date: '2026-10-01',
+		time: '5:30p-7:00p',
+		place: '150 Fayetteville - 13th Floor',
+		address: '150 Fayetteville St Floor 13',
+		city: 'Raleigh, NC',
+		meetupLink: 'https://www.meetup.com/code-club-rdu/events/316599364',
+		details: {
+			notes: [
+				'This meeting is hands-on-keyboard so make sure to bring your laptops!',
+				'For returning attendees we are meeting on the 13th floor, not the 4th.',
+				'Clone the Battleship repo before the event — hop in the Discord if you need help getting set up.',
+			],
+			agenda: [
+				{ time: '5:30–5:50', item: 'Social + pizza' },
+				{ time: '5:50–5:55', item: 'Cool tech presentation' },
+				{ time: '5:55–6:00', item: 'Welcome and goal setting' },
+				{ time: '6:00–6:45', item: 'Projects breakout' },
+				{ time: '6:45–7:00', item: 'Wrap up' },
+			],
+			callToAction: 'Want to share something cool as a talk or lead a project? DM me!',
+		},
+	},
+	{
 		event: 'Event 7',
 		date: '2026-09-03',
 		time: '5:30p-7:00p',
@@ -63,6 +87,12 @@ export const events: Event[] = [
 			],
 			callToAction: 'Want to share something cool as a talk or lead a project? DM me!',
 		},
+		recap: [
+			`Code Club RDU Event 7 - I may be so bold as to declare this the most hands-on programming event to date! We had around 13 people attend with 6 first-time attendees. 2 of which were referred outside of meetup.com! Thanks for sharing and talking about Code Club y'all.`,
+			`The club went back for round two on the 13th floor to write the classic game Battleship. Everyone broke out into two groups - JavaScript and Python. Each group went with a mob approach instead of smaller groups - about 6 people for each language group. The result was one driver and a lot of great questions and answers fired from all sides. Some watched, read ahead, while others typed along. I personally feel it was pretty effective but I would love to hear others thoughts on the matter.`,
+			`In goal setting a common thread emerged yet again in which people attended to socialize and meet with other people over a common interest.`,
+			`No photo this event but it was still one to remember. I'm excited for next event where we can continue to share ideas and learn together. If anyone has any feedback send me a message or put it in discord.`,
+		],
 	},
 	{
 		event: 'Event 6',
