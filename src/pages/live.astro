@@ -11,6 +11,7 @@ import Clock from '../components/live/Clock.astro';
 import Utility from '../components/live/Utility.astro';
 import Ticker from '../components/live/Ticker.astro';
 import Overlay from '../components/live/Overlay.astro';
+import Brand from '../components/live/Brand.astro';
 ---
 
 <Live>
@@ -20,6 +21,7 @@ import Overlay from '../components/live/Overlay.astro';
 		data-live-schedule
 		set:html={JSON.stringify(schedules)}
 	/>
+	<Brand />
 	<Now />
 	<Agenda />
 	<UpNext />
@@ -116,6 +118,8 @@ import Overlay from '../components/live/Overlay.astro';
 	const buildSchedule = (schedule: LiveSchedule | null): void => {
 		agendaList.replaceChildren();
 		tickerTrack.replaceChildren();
+		text('[data-brand-event]', schedule?.event.toUpperCase() ?? '');
+		text('[data-brand-place]', schedule?.place.toUpperCase() ?? '');
 		if (!schedule) return;
 		for (const seg of schedule.agenda) {
 			const li = document.createElement('li');

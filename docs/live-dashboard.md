@@ -176,6 +176,20 @@ ASCII logo (from seventh-event slides, 114 cols × 10 rows, keep verbatim):
   \$$$$$$   \$$$$$$   \$$$$$$$  \$$$$$$$        \$$$$$$  \$$  \$$$$$$  \$$$$$$$        \$$   \$$ \$$$$$$$   \$$$$$$
 ```
 
+**S3 — DONE 2026-09-30 on `jordan/live-chrome`.** Built from the mockup; notes for S4–S6:
+
+- Fonts self-hosted at `public/live/fonts/` (Silkscreen 400/700, Public Sans variable 100–900, Plex Mono 400; latin subsets from Google Fonts, OFL). `@font-face` in `live.css`; tokens `--ink --pane --paper --grey --sans --mono --pix`.
+- `Brand.astro` (`[data-brand-event]`, `[data-brand-place]`, uppercased) filled in `buildSchedule` on schedule change. Grid now has the `brand` row; NOW column is 1128px, deck box ≈ 1078×745.
+- `Logo.astro` renders `LOGO` from `src/lib/live/logo.ts` in `<pre data-ascii>`; the layout script scales every `[data-ascii]` to its parent's width on `document.fonts.ready`. Wrap it in a block whose width is the target (`.now-idle-logo`, `.overlay-logo`).
+- `Now.astro`: `.now-nosignal` is gone. Missing-deck branch is `[data-now-idle]` (logo + cursor + RDU tag) inside `[data-now-deck]`. S4: hide `[data-now-idle]` when a deck exists, show it when not; reveal mounts alongside it in `[data-now-deck]`. The roll bar is `.now-deck::after` (7s), overlays the deck too.
+- `Window.astro` titlebar: text, `.win-title-lines` stripes, `.win-title-buttons` (two `<i>`, second `.x`). Overlay reuses the same titlebar markup inside `.overlay-box.win`.
+- `UpNext.astro`: `[data-upnext-at]` now lives inside `.upnext-label` ("NEXT · 5:55"); the live.astro hooks are unchanged.
+- Ticker: the fixed "AGENDA" tab is `.ticker::before`; S5's duplicated track goes in `[data-ticker-track]` (`gap: 64px`, `padding-left: 24px`). `[data-state='now']` is inverted to ink.
+- INFO: `.utility-qr:not(:empty)` is the 116px paper frame; drop an `<svg>` in it (S5). Same for `.overlay-qr:not(:empty)` (160px). Micro-labels are `<b>` inside `.utility-text`.
+- Reduced motion: `html:not([data-motion='force']) .canvas *` gets `animation: none`; the layout sets `data-motion="force"` from `?motion=1`. Scanlines are static so they stay. S5's ticker scroll is covered by the same rule; the "page every 8s on tick" fallback is still S5's to add.
+- Skipped: fake visitor counter (not in the decided design), starfield/bevels (superseded by scanlines/grain/hard shadow).
+- `docs/live-chrome-mockup.html` is in `.prettierignore` so `pnpm format` doesn't churn it.
+
 **S4 (~80k) — NOW / reveal.js.** `Now.astro`, `decks.ts`, placeholder decks 00–04, destroy/re-init on segment change, NO SIGNAL. DoD: `?now=17:52&speed=30` plays deck 01, swaps at 17:55; delete a deck → NO SIGNAL; `pnpm preview` confirms reveal CSS bundles. Sub-branch `jordan/live-now`.
 
 **S5 (~60k) — UTILITY + TICKER.** `qr.ts`, `Utility.astro`, `Ticker.astro` (duplicated track, `translateX(0 → -50%)`, ▶ NOW tag), QR into after-overlay. DoD: QR scans on a phone, ticker loops ~60s w/o jank. Sub-branch `jordan/live-utility`.

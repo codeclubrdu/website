@@ -1,14 +1,23 @@
 ---
 // AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md
 // Full-canvas overlay for the waiting phases (before / idle / after). Hidden while `during`.
+// One big window frame: titlebar (title line), ASCII logo, main line, sub line.
 // live.astro sets data-phase and the three text lines every tick.
+import Logo from './Logo.astro';
 ---
 
 <div class="overlay" data-overlay hidden>
-	<div class="overlay-box">
-		<div class="overlay-title" data-overlay-title></div>
-		<div class="overlay-main" data-overlay-main></div>
-		<div class="overlay-sub" data-overlay-sub></div>
-		<div class="overlay-qr" data-overlay-qr>{/* Discord QR lands in S5 */}</div>
+	<div class="overlay-box win">
+		<header class="win-title">
+			<span class="win-title-text" data-overlay-title></span>
+			<span class="win-title-lines"></span>
+			<span class="win-title-buttons" aria-hidden="true"><i></i><i class="x"></i></span>
+		</header>
+		<div class="overlay-in">
+			<div class="overlay-logo"><Logo /></div>
+			<div class="overlay-main" data-overlay-main></div>
+			<div class="overlay-sub" data-overlay-sub></div>
+			<div class="overlay-qr" data-overlay-qr>{/* Discord QR lands in S5 */}</div>
+		</div>
 	</div>
 </div>

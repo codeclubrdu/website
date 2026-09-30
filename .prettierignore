@@ -4,3 +4,4 @@ dist/
 .claude/
 pnpm-lock.yaml
 public/
+docs/live-chrome-mockup.html

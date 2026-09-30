@@ -1,6 +1,6 @@
 ---
 // AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md
-// Titlebar + bevel shell. y2k chrome (fake buttons, bevels) lands in S3 via live.css.
+// 1-bit OS window shell: paper border, hard shadow, striped System-7 titlebar, two square buttons.
 type Props = { title: string; name: string; class?: string };
 const { title, name, class: cls } = Astro.props;
 ---
@@ -8,7 +8,8 @@ const { title, name, class: cls } = Astro.props;
 <section class:list={['win', cls]} data-window={name} style={`grid-area: ${name}`}>
 	<header class="win-title">
 		<span class="win-title-text">{title}</span>
-		<span class="win-title-buttons" aria-hidden="true"><i></i><i></i><i></i></span>
+		<span class="win-title-lines"></span>
+		<span class="win-title-buttons" aria-hidden="true"><i></i><i class="x"></i></span>
 	</header>
 	<div class="win-body"><slot /></div>
 </section>

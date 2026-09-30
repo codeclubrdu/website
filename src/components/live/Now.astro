@@ -1,14 +1,19 @@
 ---
 // AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md
 // S2 stub. S4 replaces the body with the reveal.js deck host; keep [data-now-item].
+// `.now-idle` is the missing-deck branch (S4 shows it when the segment has no deck file).
 import Window from './Window.astro';
+import Logo from './Logo.astro';
 ---
 
 <Window title="NOW" name="now">
 	<div class="now">
 		<div class="now-item" data-now-item></div>
 		<div class="now-deck" data-now-deck>
-			<div class="now-nosignal">NO SIGNAL</div>
+			<div class="now-idle" data-now-idle>
+				<div class="now-idle-logo"><Logo /></div>
+				<div class="now-idle-tag">RALEIGH · DURHAM · CHAPEL HILL <i></i></div>
+			</div>
 		</div>
 	</div>
 </Window>
