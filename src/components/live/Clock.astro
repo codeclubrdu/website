@@ -1,0 +1,12 @@
+---
+// AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md
+// Markup only. live.astro sets [data-clock-time] and [data-clock-left] every tick.
+import Window from './Window.astro';
+---
+
+<Window title="CLOCK" name="clock">
+	<div class="clock">
+		<div class="clock-time" data-clock-time></div>
+		<div class="clock-left"><span data-clock-left></span> <small>left</small></div>
+	</div>
+</Window>

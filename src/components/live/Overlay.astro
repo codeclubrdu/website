@@ -1,0 +1,14 @@
+---
+// AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md
+// Full-canvas overlay for the waiting phases (before / idle / after). Hidden while `during`.
+// live.astro sets data-phase and the three text lines every tick.
+---
+
+<div class="overlay" data-overlay hidden>
+	<div class="overlay-box">
+		<div class="overlay-title" data-overlay-title></div>
+		<div class="overlay-main" data-overlay-main></div>
+		<div class="overlay-sub" data-overlay-sub></div>
+		<div class="overlay-qr" data-overlay-qr>{/* Discord QR lands in S5 */}</div>
+	</div>
+</div>

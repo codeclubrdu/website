@@ -1,0 +1,266 @@
+/* AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md */
+/* S2: stage geometry + legible defaults. y2k chrome (bevels, starfield, pixel font) lands in S3. */
+
+html,
+body {
+	margin: 0;
+	background: #000;
+	color: #fff;
+	font-family: system-ui, sans-serif;
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
+}
+
+/* ---- canvas: designed at 1920×1080, scaled by the layout script ---- */
+.canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 1920px;
+	height: 1080px;
+	transform-origin: top left;
+	box-sizing: border-box;
+	padding: 24px;
+	display: grid;
+	gap: 24px;
+	grid-template-columns: 1128px 1fr;
+	grid-template-rows: 360px 190px 200px 1fr 72px;
+	grid-template-areas:
+		'now agenda'
+		'now upnext'
+		'now clock'
+		'now utility'
+		'ticker ticker';
+}
+
+/* ---- window shell ---- */
+.win {
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+	border: 2px solid #9a9a9a;
+	background: #101018;
+}
+.win-title {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: 40px;
+	padding: 0 14px;
+	background: #2a2a5a;
+	font-size: 22px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+.win-title-buttons i {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	margin-left: 6px;
+	border: 1px solid #fff;
+}
+.win-body {
+	flex: 1;
+	min-height: 0;
+	padding: 20px 24px;
+	overflow: hidden;
+}
+
+/* ---- AGENDA ---- */
+.agenda {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	font-size: 28px;
+	line-height: 1.2;
+}
+.agenda li {
+	display: grid;
+	grid-template-columns: 170px 1fr;
+	gap: 16px;
+	padding: 6px 12px;
+}
+.agenda li time {
+	font-variant-numeric: tabular-nums;
+	opacity: 0.8;
+}
+.agenda li[data-state='done'] {
+	opacity: 0.4;
+	text-decoration: line-through;
+}
+.agenda li[data-state='now'] {
+	background: #ffe600;
+	color: #000;
+	font-weight: 700;
+}
+.agenda li[data-state='now'] time {
+	opacity: 1;
+}
+.agenda li[data-state='now'] time::before {
+	content: '▶ ';
+}
+.agenda li[data-state='next'] {
+	color: #9ff;
+}
+
+/* ---- UP NEXT ---- */
+.upnext-label {
+	font-size: 22px;
+	letter-spacing: 0.15em;
+	opacity: 0.7;
+}
+.upnext-item {
+	font-size: 40px;
+	font-weight: 700;
+	line-height: 1.1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.upnext-at {
+	font-size: 30px;
+	opacity: 0.8;
+}
+
+/* ---- CLOCK ---- */
+.clock {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 100%;
+	font-variant-numeric: tabular-nums;
+}
+.clock-time {
+	font-size: 88px;
+	font-weight: 700;
+	line-height: 1;
+}
+.clock-left {
+	font-size: 36px;
+	margin-top: 10px;
+}
+.clock-left small {
+	font-size: 24px;
+	opacity: 0.7;
+}
+
+/* ---- NOW (stub) ---- */
+.now {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+.now-item {
+	font-size: 64px;
+	font-weight: 700;
+	line-height: 1.1;
+	margin-bottom: 20px;
+}
+.now-deck {
+	flex: 1;
+	min-height: 0;
+	display: grid;
+	place-items: center;
+	background: #000;
+	border: 2px dashed #444;
+}
+.now-nosignal {
+	font-size: 72px;
+	letter-spacing: 0.3em;
+	opacity: 0.5;
+}
+
+/* ---- UTILITY (stub) ---- */
+.utility {
+	display: flex;
+	gap: 24px;
+	height: 100%;
+	font-size: 28px;
+}
+.utility-qr {
+	flex: 0 0 auto;
+}
+.utility-text {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	gap: 10px;
+}
+
+/* ---- TICKER (stub) ---- */
+.ticker {
+	display: flex;
+	align-items: center;
+	border: 2px solid #9a9a9a;
+	background: #2a2a5a;
+	font-size: 30px;
+	white-space: nowrap;
+	overflow: hidden;
+}
+.ticker-track {
+	display: inline-flex;
+	gap: 48px;
+	padding: 0 24px;
+}
+.ticker-track [data-state='now']::before {
+	content: '▶ NOW ';
+	color: #ffe600;
+	font-weight: 700;
+}
+
+/* ---- overlay (before / idle / after) ---- */
+.overlay {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	background: rgba(0, 0, 0, 0.92);
+	text-align: center;
+}
+.overlay[hidden] {
+	display: none;
+}
+.overlay-title {
+	font-size: 56px;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	opacity: 0.8;
+}
+.overlay-main {
+	font-size: 128px;
+	font-weight: 700;
+	line-height: 1.1;
+	font-variant-numeric: tabular-nums;
+	margin: 24px 0;
+}
+.overlay-sub {
+	font-size: 48px;
+	opacity: 0.85;
+}
+.overlay[data-phase='after'] .overlay-sub:not(:empty) {
+	animation: blink 1s steps(2, start) infinite;
+	color: #ffe600;
+}
+
+@keyframes blink {
+	to {
+		visibility: hidden;
+	}
+}
+
+/* ---- dev panel (pnpm dev only) ---- */
+.dev-panel {
+	position: fixed;
+	right: 16px;
+	bottom: 16px;
+	z-index: 10;
+	padding: 8px;
+	background: #222;
+	color: #fff;
+	font-size: 14px;
+}

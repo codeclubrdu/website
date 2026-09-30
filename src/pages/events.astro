@@ -1,6 +1,6 @@
 ---
 import Main from '../layouts/main.astro';
-import { upcomingEvents, pastEvents, formatDay } from '../data/events';
+import { upcomingEvents, pastEvents, formatDay, formatRange } from '../data/events';
 ---
 
 <Main title="Events | Code Club RDU">
@@ -25,9 +25,9 @@ import { upcomingEvents, pastEvents, formatDay } from '../data/events';
 							<>
 								<h4>Agenda</h4>
 								<ul>
-									{details.agenda.map(({ time, item }) => (
+									{details.agenda.map(({ start, end, item }) => (
 										<li>
-											<b>{time}</b> — {item}
+											<b>{formatRange(start, end)}</b> — {item}
 										</li>
 									))}
 								</ul>
@@ -70,9 +70,9 @@ import { upcomingEvents, pastEvents, formatDay } from '../data/events';
 									))}
 									{details.agenda.length > 0 && (
 										<ul class="text-neutral-500">
-											{details.agenda.map(({ time, item }) => (
+											{details.agenda.map(({ start, end, item }) => (
 												<li>
-													<b>{time}</b> — {item}
+													<b>{formatRange(start, end)}</b> — {item}
 												</li>
 											))}
 										</ul>

@@ -1,0 +1,15 @@
+---
+// AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md
+// S2 stub. S5 adds the Discord QR and floor/bathroom note. live.astro sets [data-utility-next].
+import Window from './Window.astro';
+---
+
+<Window title="INFO" name="utility">
+	<div class="utility">
+		<div class="utility-qr" data-utility-qr></div>
+		<div class="utility-text">
+			<div>{/* TODO(jordan): floor/bathroom note (S5) */}</div>
+			<div class="utility-next">Next: <span data-utility-next></span></div>
+		</div>
+	</div>
+</Window>

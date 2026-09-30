@@ -1,0 +1,10 @@
+---
+// AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md
+// Markup only. live.astro fills <ol data-agenda> once per schedule pick and sets
+// data-state="done|now|next|later" on each <li> every tick.
+import Window from './Window.astro';
+---
+
+<Window title="AGENDA" name="agenda">
+	<ol class="agenda" data-agenda></ol>
+</Window>
