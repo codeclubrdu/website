@@ -1,0 +1,329 @@
+<!-- AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md -->
+<!-- S3 reference mockup. Open in a browser. Not built by Astro. Published copy: https://claude.ai/artifact/6A94ZBjo1cG94SyorUb4z2 -->
+<title>Live Dashboard Chrome</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Public+Sans:wght@400;600;800&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#f3f3f1;--ink:#111;--mute:#666;--rule:#d5d5d2;--panel:#fff;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  --sans:'Public Sans',system-ui,sans-serif;
+  --pix:'Silkscreen','Press Start 2P',monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141414;--ink:#ececec;--mute:#9a9a9a;--rule:#2c2c2c;--panel:#1c1c1c}}
+:root[data-theme="dark"]{--bg:#141414;--ink:#ececec;--mute:#9a9a9a;--rule:#2c2c2c;--panel:#1c1c1c}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans);margin:0;padding:0 16px 64px}
+.wrap{max-width:1180px;margin:0 auto}
+h1{font:800 clamp(28px,4vw,42px)/1.05 var(--sans);letter-spacing:-.02em;margin:40px 0 8px;text-wrap:balance}
+h2{font:700 13px/1 var(--pix);letter-spacing:.06em;text-transform:uppercase;margin:44px 0 14px;padding-top:14px;border-top:2px solid var(--ink)}
+h3{font:600 17px/1.3 var(--sans);margin:22px 0 6px}
+p{max-width:68ch;margin:0 0 12px}
+.lede{color:var(--mute);max-width:70ch;margin-bottom:24px}
+ul{max-width:72ch;padding-left:20px;margin:0 0 12px}li{margin:4px 0}
+code{font:14px var(--mono);background:var(--panel);border:1px solid var(--rule);padding:1px 5px}
+pre{font:13px/1.45 var(--mono);background:var(--panel);border:1px solid var(--rule);padding:12px 14px;overflow-x:auto;max-width:100%}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px 32px}
+.sw{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;max-width:900px}
+.sw div{border:1px solid var(--rule);padding:10px;font:13px var(--mono)}
+.sw i{display:block;height:44px;border:1px solid #000;margin-bottom:8px}
+.stage-wrap{margin:14px 0 6px;border:1px solid var(--rule);background:#000;position:relative;overflow:hidden}
+.stage-outer{width:100%;aspect-ratio:16/9;position:relative}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+.ctl button{font:11px var(--pix);letter-spacing:.04em;background:var(--panel);color:var(--ink);border:2px solid var(--ink);padding:8px 12px;cursor:pointer;box-shadow:3px 3px 0 var(--ink)}
+.ctl button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.ctl button:focus-visible{outline:2px dashed var(--ink);outline-offset:2px}
+.cap{font:13px var(--mono);color:var(--mute);margin-top:8px}
+
+/* =========== THE 1920x1080 MOCK =========== */
+.tv{position:absolute;top:0;left:0;width:1920px;height:1080px;transform-origin:top left;background:#050505;color:#f4f4f4;font-family:'Public Sans',system-ui,sans-serif;overflow:hidden;
+  --paper:#f4f4f4;--ink2:#050505;--grey:#8c8c8c;--dim:#2a2a2a;--pane:#0d0d0d;}
+.tv *{box-sizing:border-box}
+/* lofi texture */
+.tv::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:50;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.28) 0 2px,transparent 2px 5px);mix-blend-mode:multiply;opacity:.9}
+.tv::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:51;
+  background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55) 100%);}
+.grain{position:absolute;inset:-50%;width:200%;height:200%;pointer-events:none;z-index:49;opacity:.13;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain .6s steps(4) infinite}
+@keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-3%)}75%{transform:translate(-1%,-1%)}100%{transform:translate(0,0)}}
+.dither{background-image:linear-gradient(45deg,#fff 25%,transparent 25%,transparent 75%,#fff 75%),linear-gradient(45deg,#fff 25%,transparent 25%,transparent 75%,#fff 75%);background-size:4px 4px;background-position:0 0,2px 2px}
+
+.tv .canvas{position:absolute;inset:0;padding:20px 24px 24px;display:grid;gap:16px 24px;
+  grid-template-columns:1128px 1fr;grid-template-rows:60px 330px 140px 170px 1fr 64px;
+  grid-template-areas:'brand brand' 'now agenda' 'now upnext' 'now clock' 'now utility' 'ticker ticker'}
+
+/* brand bar */
+.brand{grid-area:brand;display:flex;align-items:center;justify-content:space-between;border:3px solid var(--paper);background:var(--ink2);padding:0 18px 0 14px}
+.brand-l{display:flex;align-items:center;gap:16px}
+.brand-l svg{width:44px;height:44px;fill:var(--paper)}
+.brand-word{font:700 26px/1 'Silkscreen',monospace;letter-spacing:.04em}
+.brand-word small{font:400 18px 'Silkscreen',monospace;opacity:.6;margin-left:12px}
+.brand-r{display:flex;align-items:center;gap:26px;font:400 16px 'Silkscreen',monospace;letter-spacing:.06em}
+.live{display:inline-flex;align-items:center;gap:10px;background:var(--paper);color:var(--ink2);padding:6px 12px;font-weight:700}
+.live b{width:12px;height:12px;background:var(--ink2);animation:blink 1.2s steps(2,start) infinite}
+.brand-r .ct{opacity:.7}
+
+/* window shell — Win 1.0 / Mac System 7 monochrome */
+.win{display:flex;flex-direction:column;min-height:0;border:3px solid var(--paper);background:var(--pane);box-shadow:8px 8px 0 #000, 8px 8px 0 1px var(--paper);position:relative}
+.wt{display:flex;align-items:center;height:40px;padding:0 10px;border-bottom:3px solid var(--paper);background:var(--ink2);font:700 18px 'Silkscreen',monospace;letter-spacing:.06em;gap:12px}
+.wt .lines{flex:1;height:22px;background:repeating-linear-gradient(0deg,var(--paper) 0 2px,transparent 2px 5px);opacity:.85}
+.wt .btn{width:20px;height:20px;border:2px solid var(--paper);background:var(--ink2)}
+.wt .btn.x::after{content:"";display:block;width:100%;height:100%;background:linear-gradient(45deg,transparent 45%,var(--paper) 45% 55%,transparent 55%),linear-gradient(-45deg,transparent 45%,var(--paper) 45% 55%,transparent 55%)}
+.wb{flex:1;min-height:0;padding:14px 22px;overflow:hidden}
+
+/* agenda */
+.agenda{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;font-size:26px;line-height:1.15}
+.agenda li{display:grid;grid-template-columns:120px 1fr;gap:16px;padding:4px 12px;border:2px solid transparent}
+.agenda time{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;opacity:.75}
+.agenda li[data-s=done]{opacity:.35;text-decoration:line-through}
+.agenda li[data-s=now]{background:var(--paper);color:var(--ink2);font-weight:800}
+.agenda li[data-s=now] time{opacity:1}
+.agenda li[data-s=now] time::before{content:"▶ "}
+.agenda li[data-s=next]{border-color:var(--paper);border-style:dashed}
+.lbl{font:400 15px 'Silkscreen',monospace;letter-spacing:.14em;opacity:.65;margin-bottom:4px}
+.big{font-size:36px;font-weight:800;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.at{font:400 28px 'IBM Plex Mono',monospace;opacity:.8;margin-top:6px}
+.clock{display:flex;flex-direction:column;justify-content:center;height:100%;font-variant-numeric:tabular-nums}
+.clock .t{font:800 66px/1 'Public Sans',sans-serif;letter-spacing:-.02em}
+.clock .l{font:400 26px/1 'IBM Plex Mono',monospace;margin-top:8px}
+.clock .l small{font:400 15px 'Silkscreen',monospace;opacity:.65;margin-left:8px}
+.util{display:flex;gap:22px;height:100%;font-size:22px;line-height:1.3}
+.qr{flex:0 0 auto;width:116px;height:116px;border:3px solid var(--paper);padding:6px;background:var(--paper);image-rendering:pixelated}
+.qr .m{width:100%;height:100%;background-color:var(--paper);background-image:
+  linear-gradient(90deg,var(--ink2) 50%,transparent 50%),linear-gradient(var(--ink2) 50%,transparent 50%),
+  radial-gradient(circle at 20% 20%,var(--ink2) 14%,transparent 15%),radial-gradient(circle at 80% 20%,var(--ink2) 14%,transparent 15%),radial-gradient(circle at 20% 80%,var(--ink2) 14%,transparent 15%);
+  background-size:14px 14px,14px 14px,100% 100%,100% 100%,100% 100%;background-blend-mode:difference}
+.util .txt{display:flex;flex-direction:column;justify-content:flex-end;gap:8px}
+.util .txt b{font:400 15px 'Silkscreen',monospace;letter-spacing:.12em;opacity:.65}
+
+/* NOW */
+.now{display:flex;flex-direction:column;height:100%}
+.now .item{font-size:48px;font-weight:800;line-height:1.05;margin-bottom:12px;letter-spacing:-.01em}
+.deck{flex:1;min-height:0;position:relative;display:grid;place-items:center;background:#000;border:3px double var(--grey);overflow:hidden}
+.deck .slide{padding:40px 56px;width:100%}
+.deck .slide h4{font:700 20px 'Silkscreen',monospace;letter-spacing:.1em;opacity:.6;margin:0 0 20px}
+.deck .slide .h{font:800 60px/1.05 'Public Sans',sans-serif;margin:0 0 20px;letter-spacing:-.01em}
+.deck .slide li{font-size:32px;margin:8px 0}
+.deck .slide ul{padding-left:36px}
+.idle{display:flex;flex-direction:column;align-items:center;gap:18px;width:100%;height:100%;justify-content:center;padding:16px}
+.fit{display:block;transform-origin:center top}
+.ascii{font:400 15px/1.12 'IBM Plex Mono',ui-monospace,Menlo,monospace;white-space:pre;margin:0;color:var(--paper);text-shadow:0 0 6px rgba(255,255,255,.35)}
+.idle .tag{font:400 18px 'Silkscreen',monospace;letter-spacing:.25em;opacity:.55;display:flex;align-items:center;gap:14px}
+.idle .tag i{display:inline-block;width:14px;height:22px;background:var(--paper);animation:blink 1s steps(2,start) infinite}
+.deck::after{content:"";position:absolute;left:0;right:0;height:60px;top:-60px;background:linear-gradient(transparent,rgba(255,255,255,.08),transparent);animation:roll 7s linear infinite;pointer-events:none}
+@keyframes roll{to{top:100%}}
+
+/* ticker */
+.ticker{grid-area:ticker;display:flex;align-items:center;border:3px solid var(--paper);background:var(--paper);color:var(--ink2);font:700 26px 'Silkscreen',monospace;white-space:nowrap;overflow:hidden;position:relative}
+.ticker .tag{flex:0 0 auto;height:100%;display:flex;align-items:center;padding:0 22px;background:var(--ink2);color:var(--paper);border-right:3px solid var(--paper);z-index:1}
+.track{display:inline-flex;gap:64px;padding-left:24px;animation:scroll 60s linear infinite}
+.track span[data-s=now]::before{content:"▶ NOW ";}
+.track span[data-s=now]{background:var(--ink2);color:var(--paper);padding:4px 12px}
+@keyframes scroll{to{transform:translateX(-50%)}}
+@keyframes blink{to{visibility:hidden}}
+
+/* overlay */
+.ov{position:absolute;inset:0;z-index:40;display:grid;place-items:center;background:rgba(0,0,0,.94);text-align:center}
+.ov[hidden]{display:none}
+.ov .box{border:3px solid var(--paper);background:var(--ink2);padding:0 0 44px;box-shadow:12px 12px 0 #000,12px 12px 0 1px var(--paper);min-width:1140px}
+.ov .box .wt{height:44px;font-size:20px}
+.ov .box .in{padding:36px 60px 0}
+.ov .ascii{font-size:10.5px;opacity:.9;text-align:left;display:inline-block;margin-bottom:26px}
+.ov .main{font:800 112px/1.05 'Public Sans',sans-serif;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin:6px 0 14px}
+.ov .sub{font:400 40px 'IBM Plex Mono',monospace;opacity:.8}
+.ov[data-phase=after] .sub{animation:blink 1s steps(2,start) infinite;background:var(--paper);color:var(--ink2);display:inline-block;padding:4px 20px}
+
+@media (prefers-reduced-motion:reduce){.tv *{animation:none!important}}
+</style>
+
+<div class="wrap">
+<h1>/live chrome: dark retro lofi, black &amp; white</h1>
+<p class="lede">UX recommendation for S3 (y2k chrome pass) of the in-meeting dashboard. Direction is the Etsy "Dark Retro Lofi Black &amp; White" overlay package: monochrome, old-OS window frames, scanlines and grain, pixel titles. Two asks folded in: the Code Club RDU ASCII logo replaces NO SIGNAL, and a Code Club RDU brand bar sits on top.</p>
+
+<h2>Mockup · 1920×1080, scaled</h2>
+<div class="stage-wrap"><div class="stage-outer" id="stage">
+<div class="tv" id="tv">
+  <div class="grain"></div>
+  <div class="canvas">
+    <div class="brand">
+      <div class="brand-l">
+        <svg viewBox="0 0 128 128" aria-hidden="true"><path d="M50.4 78.5a75.1 75.1 0 0 0-28.5 6.9l24.2-65.7c.7-2 1.9-3.2 3.4-3.2h29c1.5 0 2.7 1.2 3.4 3.2l24.2 65.7s-11.6-7-28.5-7L67 45.5c-.4-1.7-1.6-2.8-2.9-2.8-1.3 0-2.5 1.1-2.9 2.7L50.4 78.5Zm-1.1 28.2Zm-4.2-20.2c-2 6.6-.6 15.8 4.2 20.2a17.5 17.5 0 0 1 .2-.7 5.5 5.5 0 0 1 5.7-4.5c2.8.1 4.3 1.5 4.7 4.7.2 1.1.2 2.3.2 3.5v.4c0 2.7.7 5.2 2.2 7.4a13 13 0 0 0 5.7 4.9v-.3l-.2-.3c-1.8-5.6-.5-9.5 4.4-12.8l1.5-1a73 73 0 0 0 3.2-2.2 16 16 0 0 0 6.8-11.4c.3-2 .1-4-.6-6l-.8.6-1.6 1a37 37 0 0 1-22.4 2.7c-5-.7-9.7-2-13.2-6.2Z"/></svg>
+        <div class="brand-word">CODE CLUB RDU<small>EVENT 8</small></div>
+      </div>
+      <div class="brand-r"><span class="ct">150 FAYETTEVILLE · 13TH FL</span><span class="live"><b></b>LIVE</span></div>
+    </div>
+
+    <section class="win" style="grid-area:now">
+      <div class="wt"><span>NOW</span><span class="lines"></span><span class="btn"></span><span class="btn x"></span></div>
+      <div class="wb now">
+        <div class="item" id="nowItem">Social + pizza</div>
+        <div class="deck">
+          <div class="idle" id="deckIdle">
+<pre class="ascii fit">  ______                   __                   ______   __            __              _______   _______   __    __
+ /      \                 |  \                 /      \ |  \          |  \            |       \ |       \ |  \  |  \
+|  $$$$$$\  ______    ____| $$  ______        |  $$$$$$\| $$ __    __ | $$____        | $$$$$$$\| $$$$$$$\| $$  | $$
+| $$   \$$ /      \  /      $$ /      \       | $$   \$$| $$|  \  |  \| $$    \       | $$__| $$| $$  | $$| $$  | $$
+| $$      |  $$$$$$\|  $$$$$$$|  $$$$$$\      | $$      | $$| $$  | $$| $$$$$$$\      | $$    $$| $$  | $$| $$  | $$
+| $$   __ | $$  | $$| $$  | $$| $$    $$      | $$   __ | $$| $$  | $$| $$  | $$      | $$$$$$$\| $$  | $$| $$  | $$
+| $$__/  \| $$__/ $$| $$__| $$| $$$$$$$$      | $$__/  \| $$| $$__/ $$| $$__/ $$      | $$  | $$| $$__/ $$| $$__/ $$
+ \$$    $$ \$$    $$ \$$    $$ \$$     \       \$$    $$| $$ \$$    $$| $$    $$      | $$  | $$| $$    $$ \$$    $$
+  \$$$$$$   \$$$$$$   \$$$$$$$  \$$$$$$$        \$$$$$$  \$$  \$$$$$$  \$$$$$$$        \$$   \$$ \$$$$$$$   \$$$$$$</pre>
+            <div class="tag">RALEIGH · DURHAM · CHAPEL HILL <i></i></div>
+          </div>
+          <div class="slide" id="deckSlide" hidden>
+            <h4>SLIDE 2 / 3</h4>
+            <div class="h">Battleship, part 2</div>
+            <ul><li>Clone the repo · Discord #battleship if stuck</li><li>Teams of 3–4, mixed skill</li><li>Ship one feature, demo at 6:45</li></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="win" style="grid-area:agenda">
+      <div class="wt"><span>AGENDA</span><span class="lines"></span><span class="btn"></span><span class="btn x"></span></div>
+      <div class="wb"><ol class="agenda">
+        <li data-s="done"><time>5:30</time><span>Social + pizza</span></li>
+        <li data-s="now"><time>5:50</time><span>Cool tech presentation</span></li>
+        <li data-s="next"><time>5:55</time><span>Welcome and goal setting</span></li>
+        <li><time>6:00</time><span>Projects breakout</span></li>
+        <li><time>6:45</time><span>Wrap up</span></li>
+      </ol></div>
+    </section>
+
+    <section class="win" style="grid-area:upnext">
+      <div class="wt"><span>UP NEXT</span><span class="lines"></span><span class="btn"></span><span class="btn x"></span></div>
+      <div class="wb"><div class="lbl">NEXT · 5:55</div><div class="big">Welcome and goal setting</div></div>
+    </section>
+
+    <section class="win" style="grid-area:clock">
+      <div class="wt"><span>CLOCK</span><span class="lines"></span><span class="btn"></span><span class="btn x"></span></div>
+      <div class="wb clock"><div class="t">5:52 pm</div><div class="l">02:41<small>LEFT</small></div></div>
+    </section>
+
+    <section class="win" style="grid-area:utility">
+      <div class="wt"><span>INFO</span><span class="lines"></span><span class="btn"></span><span class="btn x"></span></div>
+      <div class="wb util">
+        <div class="qr"><div class="m"></div></div>
+        <div class="txt"><div><b>DISCORD</b> scan to join</div><div>Bathrooms: past the elevators, left</div><div><b>NEXT</b> Thu, Nov 5 · 5:30 pm</div></div>
+      </div>
+    </section>
+
+    <div class="ticker"><span class="tag">AGENDA</span>
+      <div class="track">
+        <span>5:30 Social + pizza</span><span data-s="now">5:50 Cool tech presentation</span><span>5:55 Welcome and goal setting</span><span>6:00 Projects breakout</span><span>6:45 Wrap up</span><span>Want to share something cool as a talk or lead a project? DM me!</span>
+        <span>5:30 Social + pizza</span><span data-s="now">5:50 Cool tech presentation</span><span>5:55 Welcome and goal setting</span><span>6:00 Projects breakout</span><span>6:45 Wrap up</span><span>Want to share something cool as a talk or lead a project? DM me!</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="ov" id="ov" hidden data-phase="before">
+    <div class="box">
+      <div class="wt"><span id="ovTitle">CODE CLUB RDU · EVENT 8</span><span class="lines"></span><span class="btn"></span><span class="btn x"></span></div>
+      <div class="in">
+<pre class="ascii fit">  ______                   __                   ______   __            __              _______   _______   __    __
+ /      \                 |  \                 /      \ |  \          |  \            |       \ |       \ |  \  |  \
+|  $$$$$$\  ______    ____| $$  ______        |  $$$$$$\| $$ __    __ | $$____        | $$$$$$$\| $$$$$$$\| $$  | $$
+| $$   \$$ /      \  /      $$ /      \       | $$   \$$| $$|  \  |  \| $$    \       | $$__| $$| $$  | $$| $$  | $$
+| $$      |  $$$$$$\|  $$$$$$$|  $$$$$$\      | $$      | $$| $$  | $$| $$$$$$$\      | $$    $$| $$  | $$| $$  | $$
+| $$   __ | $$  | $$| $$  | $$| $$    $$      | $$   __ | $$| $$  | $$| $$  | $$      | $$$$$$$\| $$  | $$| $$  | $$
+| $$__/  \| $$__/ $$| $$__| $$| $$$$$$$$      | $$__/  \| $$| $$__/ $$| $$__/ $$      | $$  | $$| $$__/ $$| $$__/ $$
+ \$$    $$ \$$    $$ \$$    $$ \$$     \       \$$    $$| $$ \$$    $$| $$    $$      | $$  | $$| $$    $$ \$$    $$
+  \$$$$$$   \$$$$$$   \$$$$$$$  \$$$$$$$        \$$$$$$  \$$  \$$$$$$  \$$$$$$$        \$$   \$$ \$$$$$$$   \$$$$$$</pre>
+        <div class="main" id="ovMain">Starts 5:30 — in 0:07:42</div>
+        <div class="sub" id="ovSub">150 Fayetteville · 13th Floor</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div></div>
+<div class="ctl" role="group" aria-label="Mock state">
+  <button id="bDuringIdle" aria-pressed="true">during · no deck</button>
+  <button id="bDuringDeck" aria-pressed="false">during · deck playing</button>
+  <button id="bBefore" aria-pressed="false">before · starting soon</button>
+  <button id="bAfter" aria-pressed="false">after · thanks</button>
+</div>
+<p class="cap">Fonts here are Google-hosted for the mock only. Real build self-hosts (venue wifi rule). Grain, scanlines and the roll bar are CSS; no assets.</p>
+
+<h2>Direction</h2>
+<div class="grid2">
+<div>
+<h3>What the reference actually is</h3>
+<p>Monochrome (true black, off-white, one grey), not neon. Frames are classic 1-bit OS windows: thick border, hard drop shadow, striped titlebar, square close box. Texture does the "lofi" work: scanlines, film grain, soft vignette, a slow roll bar. No gradients, no colour accent.</p>
+<h3>Why it fits this dashboard</h3>
+<ul>
+<li>Spec already calls for six OS-style windows; this is the same idea in 1-bit.</li>
+<li>Black &amp; white reads from across a room on a TV better than yellow-on-navy.</li>
+<li>"Current segment" becomes <em>inverted</em> (white block, black text). Stronger than a colour highlight, and zero palette to maintain.</li>
+<li>The ASCII logo is monospace 1-bit art. It is native to this look; in the old navy/yellow chrome it would fight.</li>
+</ul>
+</div>
+<div>
+<h3>Tokens</h3>
+<div class="sw">
+<div><i style="background:#050505"></i>--ink2 #050505<br>ground, titlebars</div>
+<div><i style="background:#0d0d0d"></i>--pane #0d0d0d<br>window bodies</div>
+<div><i style="background:#f4f4f4"></i>--paper #f4f4f4<br>borders, text, NOW block</div>
+<div><i style="background:#8c8c8c"></i>--grey #8c8c8c<br>deck frame, done rows</div>
+</div>
+<h3>Type</h3>
+<ul>
+<li><b>Silkscreen</b> (OFL, self-host): titlebars, labels, ticker, LIVE badge. Pixel, 2 weights, legible at 18px on 1080p.</li>
+<li><b>Public Sans 800</b>: segment titles, clock, overlay countdown. The "large clean sans" the spec demands.</li>
+<li><b>IBM Plex Mono</b>: times, countdown, ASCII logo. Tabular by nature.</li>
+</ul>
+</div>
+</div>
+
+<h2>The two asks</h2>
+<h3>1. Brand bar on top</h3>
+<p>New 64px grid row <code>brand</code> above the windows. Left: favicon mark + "CODE CLUB RDU" wordmark + event tag. Right: venue line + blinking LIVE chip. Costs 84px of height; NOW row shrinks 360 → 320px, which still holds a 16:9 deck at 1080 wide. The bar is static per schedule, filled from <code>schedule.event</code> and <code>schedule.place</code>, so it needs no tick handling.</p>
+<h3>2. ASCII logo instead of NO SIGNAL</h3>
+<p>Source: <code>~/Documents/notes/meetup/seventh-event/slides.html</code>, the <code>pre.ascii-art</code> block (114 cols × 10 rows). At 15.4px Plex Mono it is ~1060px wide, fits the deck box with margin. Used in two places: NOW deck host when no deck file exists for the segment (S4's missing-file branch), and the before/idle/after overlay above the countdown. A blinking cursor + "RALEIGH · DURHAM · CHAPEL HILL" under it replaces the "no signal" idea with an idle screen that still says who we are. Store it once in <code>src/lib/live/logo.ts</code> as a template string, render into a <code>&lt;pre&gt;</code>; no image.</p>
+
+<h2>Per-window notes</h2>
+<ul>
+<li><b>Window shell</b>: 3px paper border, 8px hard shadow, titlebar with horizontal stripes (System 7) and two square buttons. Keep <code>.win</code> / <code>.win-title</code> / <code>.win-title-buttons</code> selectors per the S2 handoff.</li>
+<li><b>AGENDA</b>: done = 35% + strikethrough; now = inverted block with ▶; next = dashed outline. Three states readable without colour.</li>
+<li><b>CLOCK</b>: time in Public Sans 800, countdown in mono. Drop the yellow; "LEFT" becomes a Silkscreen micro-label.</li>
+<li><b>TICKER</b>: inverted (paper bg, ink text) so the bottom edge anchors the composition. Fixed "AGENDA" tab on the left, ▶ NOW item inverted back to ink. 60s loop unchanged.</li>
+<li><b>INFO</b>: QR in a paper frame (already white, so it scans). Micro-labels in Silkscreen.</li>
+<li><b>Overlay</b>: not a bare centered text block. One big window frame with titlebar, logo, countdown. After-phase "running over" keeps the blink but as an inverted chip.</li>
+<li><b>Texture</b>: scanlines via <code>::before</code> repeating-gradient, grain via inline SVG feTurbulence data URI animated in 4 steps, vignette via <code>::after</code>. All on <code>.canvas</code> so they scale with it. Under <code>prefers-reduced-motion</code> (unless <code>?motion=1</code>): grain and roll bar freeze, scanlines stay.</li>
+</ul>
+
+<h2>Guardrails</h2>
+<ul>
+<li>Scanlines at 28% cut perceived brightness; verified body text stays ≥ 27px, titles 18px pixel. Test on the actual TV, scanline opacity is the first dial to turn down.</li>
+<li>Grain is a 220px tile at 13% opacity; on a weak AirPlay laptop, drop the animation and keep it static.</li>
+<li>reveal.js decks sit inside the deck frame untouched; scanlines overlay them too. If a deck has photos, that is the look.</li>
+<li>Silkscreen has no lowercase-friendly glyphs at small size; never use it for body copy. Spec's "body = clean sans" holds.</li>
+</ul>
+
+<h2>Build order for S3</h2>
+<ul>
+<li>Add <code>brand</code> row to <code>.canvas</code> grid, new <code>Brand.astro</code> (markup only, filled once per schedule pick).</li>
+<li>Rewrite <code>live.css</code> tokens + window shell + texture layers. Selectors from S2 stay.</li>
+<li><code>logo.ts</code> + swap <code>.now-nosignal</code> and overlay to render it.</li>
+<li>Self-host Silkscreen, Public Sans, Plex Mono under <code>public/live/fonts/</code>.</li>
+<li>Rehearse <code>/live?now=17:49&amp;speed=60</code>; check inverted NOW row flips at 17:50.</li>
+</ul>
+</div>
+
+<script>
+(function(){
+  var stage=document.getElementById('stage'),tv=document.getElementById('tv');
+  function fit(){var s=stage.clientWidth/1920;tv.style.transform='scale('+s+')';}
+  fit();addEventListener('resize',fit);
+  // scale each ASCII logo to its box (font metrics vary by fallback face)
+  function fitAscii(){document.querySelectorAll('.ascii').forEach(function(pre){pre.style.transform='';var box=pre.parentElement;var aw=box.clientWidth-8,ah=box.clientHeight;var sib=0;Array.prototype.forEach.call(box.children,function(c){if(c!==pre)sib+=c.offsetHeight+18;});var sc=Math.min(aw/pre.offsetWidth,Math.max(.2,(ah-sib)/pre.offsetHeight),1.6);pre.style.transform='scale('+sc+')';pre.style.marginBottom=(pre.offsetHeight*(sc-1))+'px';});}
+  fitAscii();document.fonts&&document.fonts.ready.then(fitAscii);setTimeout(fitAscii,800);
+  var ov=document.getElementById('ov'),idle=document.getElementById('deckIdle'),slide=document.getElementById('deckSlide');
+  var btns={bDuringIdle:function(){ov.hidden=true;idle.hidden=false;slide.hidden=true;},
+    bDuringDeck:function(){ov.hidden=true;idle.hidden=true;slide.hidden=false;},
+    bBefore:function(){ov.hidden=false;ov.dataset.phase='before';t('CODE CLUB RDU · EVENT 8','Starts 5:30 — in 0:07:42','150 Fayetteville · 13th Floor');},
+    bAfter:function(){ov.hidden=false;ov.dataset.phase='after';t('THANKS FOR COMING!','Next: Thu, Nov 5 · 5:30 pm','running over 2:14');}};
+  function t(a,b,c){document.getElementById('ovTitle').textContent=a;document.getElementById('ovMain').textContent=b;document.getElementById('ovSub').textContent=c;}
+  Object.keys(btns).forEach(function(id){document.getElementById(id).addEventListener('click',function(){
+    btns[id]();Object.keys(btns).forEach(function(k){document.getElementById(k).setAttribute('aria-pressed',String(k===id));});});});
+})();
+</script>

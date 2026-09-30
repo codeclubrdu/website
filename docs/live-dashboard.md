@@ -107,12 +107,15 @@ Discord invite URL hoisted to `src/data/links.ts` and shared with `Header.astro`
 
 ```
 docs/live-dashboard.md
+docs/live-chrome-mockup.html  # S3 reference mockup (not built)
 src/pages/live.astro            # page: embeds JSON, one <script>, one interval, live:tick
 src/layouts/live.astro          # bare layout, noindex, canvas scaler, wake lock
 src/lib/live/schedule.ts        # pure: validate + computeState
 src/lib/live/decks.ts           # glob decks, index by date/segment
 src/lib/live/qr.ts              # build-time SVG via uqr
 src/components/live/Window.astro   # titlebar/bevel shell
+src/components/live/Brand.astro    # top brand bar (S3)
+src/lib/live/logo.ts            # ASCII logo string (S3)
 src/components/live/{Agenda,Now,UpNext,Clock,Utility,Ticker,Overlay}.astro
 src/styles/live.css             # y2k chrome, imported by live layout only
 src/data/live/<date>/NN.md      # decks (glue)
@@ -146,6 +149,32 @@ Estimates include ~25k fixed overhead. Target 60–100k each. S1 → S2 → {S3 
 - After-overrun blink is in `live.css` (`.overlay[data-phase='after'] .overlay-sub`); S3 can restyle but keep it blinking.
 
 **S3 (~70k) — y2k chrome.** `live.css`, `Window.astro`, starfield, bevels, counter, blink, pixel titles, reduced-motion handling + `?motion=1`. Touches no other window component. Sub-branch `jordan/live-chrome`, merge back.
+
+**S3 — DESIGN DECIDED 2026-09-30 (UX session; build not started).** Direction: Etsy "Dark Retro Lofi Black & White" Twitch overlay package. Reference mockup w/ exact CSS: `docs/live-chrome-mockup.html` (open in browser; state toggles under the stage). Published: https://claude.ai/artifact/6A94ZBjo1cG94SyorUb4z2. Build from the mockup's `.tv` CSS block; settled:
+
+- **Monochrome only.** Tokens: `--ink #050505` (ground, titlebars), `--pane #0d0d0d` (window bodies), `--paper #f4f4f4` (borders, text), `--grey #8c8c8c` (deck frame, done rows). No yellow, no navy. `now` state = inverted block (paper bg, ink text), not a colour.
+- **1-bit OS chrome.** `.win`: 3px paper border, `box-shadow: 8px 8px 0 #000, 8px 8px 0 1px paper`. `.win-title`: 40px, striped System-7 fill (`repeating-linear-gradient` 2px paper / 3px gap) between title text and two 20px square buttons (blank + X). Keep S2 selectors.
+- **Texture, CSS only, on `.canvas`:** scanlines (`::before`, 2px/5px, rgba(0,0,0,.28), multiply), grain (`.grain` div, inline SVG feTurbulence data-URI, opacity .13, 4-step `steps()` animation), vignette (`::after` radial), slow roll bar over the deck box (7s). Reduced-motion (unless `?motion=1`): grain + roll freeze, scanlines stay. Scanline opacity is the first dial to lower if the TV looks dim.
+- **Type (self-host under `public/live/fonts/`, OFL):** Silkscreen 400/700 → titlebars, labels, ticker, LIVE chip; never body copy. Public Sans 800 → segment titles, clock, overlay countdown. IBM Plex Mono → times, countdown, ASCII logo.
+- **Brand bar (new).** Grid row `brand` 60px above the windows: `'brand brand' 'now agenda' 'now upnext' 'now clock' 'now utility' 'ticker ticker'`, rows `60px 330px 140px 170px 1fr 64px`, gap `16px 24px`, padding `20px 24px 24px`. Left: favicon mark (inline `public/favicon.svg` path, paper fill) + "CODE CLUB RDU" Silkscreen 700 26px + `schedule.event` tag. Right: `schedule.place` uppercased + blinking "■ LIVE" chip (paper bg). New `src/components/live/Brand.astro`, markup only, filled once per schedule pick from `live.astro` (`[data-brand-event]`, `[data-brand-place]`).
+- **ASCII logo replaces NO SIGNAL.** Text below → `src/lib/live/logo.ts` (`export const LOGO = \`…\``). Rendered in `<pre>`Plex Mono 15px/1.12, scaled to fit its box w/`transform: scale()`(measure on`document.fonts.ready`). Two uses: (1) NOW deck host when segment has no deck file (S4's missing-file branch): logo + blinking cursor + "RALEIGH · DURHAM · CHAPEL HILL" Silkscreen 18px .55 opacity; (2) overlay: logo above the countdown.
+- **Overlay** is a window, not bare text: one `.win` frame w/ titlebar (title line), logo, `.overlay-main` Public Sans 800 112px, `.overlay-sub` Plex Mono 40px. After-phase blink stays, rendered as an inverted chip.
+- **Per window:** AGENDA 26px, rows `120px 1fr`, done = .35 opacity + strikethrough, next = dashed paper border. UP NEXT: label line "NEXT · 5:55" (Silkscreen 15px), item Public Sans 800 36px, `.upnext-at` merged into label. CLOCK: 66px time, 26px mono countdown, "LEFT" Silkscreen micro-label. INFO: QR 116px in paper frame, 22px text, Silkscreen micro-labels. TICKER: inverted (paper bg), fixed ink "AGENDA" tab left, ▶ NOW item inverted back to ink, 64px tall.
+- **Build order:** `.canvas` grid + `Brand.astro` → `live.css` tokens/shell/texture → `logo.ts` + swap `.now-nosignal` + overlay → self-host fonts → rehearse `/live?now=17:49&speed=60`, confirm inverted NOW row flips at 17:50. Sub-branch `jordan/live-chrome`.
+
+ASCII logo (from seventh-event slides, 114 cols × 10 rows, keep verbatim):
+
+```
+  ______                   __                   ______   __            __              _______   _______   __    __
+ /      \                 |  \                 /      \ |  \          |  \            |       \ |       \ |  \  |  \
+|  $$$$$$\  ______    ____| $$  ______        |  $$$$$$\| $$ __    __ | $$____        | $$$$$$$\| $$$$$$$\| $$  | $$
+| $$   \$$ /      \  /      $$ /      \       | $$   \$$| $$|  \  |  \| $$    \       | $$__| $$| $$  | $$| $$  | $$
+| $$      |  $$$$$$\|  $$$$$$$|  $$$$$$\      | $$      | $$| $$  | $$| $$$$$$$\      | $$    $$| $$  | $$| $$  | $$
+| $$   __ | $$  | $$| $$  | $$| $$    $$      | $$   __ | $$| $$  | $$| $$  | $$      | $$$$$$$\| $$  | $$| $$  | $$
+| $$__/  \| $$__/ $$| $$__| $$| $$$$$$$$      | $$__/  \| $$| $$__/ $$| $$__/ $$      | $$  | $$| $$__/ $$| $$__/ $$
+ \$$    $$ \$$    $$ \$$    $$ \$$     \       \$$    $$| $$ \$$    $$| $$    $$      | $$  | $$| $$    $$ \$$    $$
+  \$$$$$$   \$$$$$$   \$$$$$$$  \$$$$$$$        \$$$$$$  \$$  \$$$$$$  \$$$$$$$        \$$   \$$ \$$$$$$$   \$$$$$$
+```
 
 **S4 (~80k) — NOW / reveal.js.** `Now.astro`, `decks.ts`, placeholder decks 00–04, destroy/re-init on segment change, NO SIGNAL. DoD: `?now=17:52&speed=30` plays deck 01, swaps at 17:55; delete a deck → NO SIGNAL; `pnpm preview` confirms reveal CSS bundles. Sub-branch `jordan/live-now`.
 
