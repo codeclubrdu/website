@@ -1,7 +1,7 @@
 ---
 // AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md
 // Bare layout for /live: no site Header, no max-width, noindex.
-// Owns the 1920×1080 canvas scaler, screen wake lock and `f`/click → fullscreen.
+// Owns the 1920×1080 canvas scaler and the screen wake lock. Fullscreen is the browser's own.
 import '../styles/live.css';
 const { title = 'Code Club RDU — live' } = Astro.props;
 ---
@@ -51,17 +51,5 @@ const { title = 'Code Club RDU — live' } = Astro.props;
 	void wake();
 	document.addEventListener('visibilitychange', () => {
 		if (document.visibilityState === 'visible' && (lock === null || lock.released)) void wake();
-	});
-
-	// `f` or a click on the canvas → fullscreen. Clicks inside form controls (dev panel) are ignored.
-	const fullscreen = (): void => {
-		if (!document.fullscreenElement) void document.documentElement.requestFullscreen?.();
-	};
-	addEventListener('keydown', (e) => {
-		if (e.key === 'f' && !(e.target instanceof HTMLInputElement)) fullscreen();
-	});
-	addEventListener('click', (e) => {
-		if (!(e.target instanceof Element && e.target.closest('form, button, input, select')))
-			fullscreen();
 	});
 </script>

@@ -71,7 +71,7 @@ One `setInterval` (1s) in `live.astro` computes state and dispatches a `live:tic
 
 Design at 1920×1080. `transform: scale(min(innerWidth/1920, innerHeight/1080))`, `transform-origin: top left`, letterboxed, `overflow: hidden` on html/body. Own layout `src/layouts/live.astro` (no `<Header/>`, no `max-w`). Font sizes are fixed px; legible from across a room at 1080p is the bar.
 
-Screen Wake Lock on load (`navigator.wakeLock.request('screen')`, re-request on `visibilitychange`). `f` key or click → fullscreen. Fonts bundled locally, no CDN (venue wifi is a single point of failure). `pnpm preview` is the offline fallback.
+Screen Wake Lock on load (`navigator.wakeLock.request('screen')`, re-request on `visibilitychange`). Fullscreen is the browser's native one (no in-page handler). Fonts bundled locally, no CDN (venue wifi is a single point of failure). `pnpm preview` is the offline fallback.
 
 ### Windows
 
@@ -108,7 +108,7 @@ Discord invite URL hoisted to `src/data/links.ts` and shared with `Header.astro`
 ```
 docs/live-dashboard.md
 src/pages/live.astro            # page: embeds JSON, one <script>, one interval, live:tick
-src/layouts/live.astro          # bare layout, noindex, canvas scaler, wake lock, fullscreen
+src/layouts/live.astro          # bare layout, noindex, canvas scaler, wake lock
 src/lib/live/schedule.ts        # pure: validate + computeState
 src/lib/live/decks.ts           # glob decks, index by date/segment
 src/lib/live/qr.ts              # build-time SVG via uqr
@@ -134,7 +134,7 @@ Estimates include ~25k fixed overhead. Target 60–100k each. S1 → S2 → {S3 
 - Dev-only clock panel in `live.astro` (`import.meta.env.DEV`): event select, HH:MM, speed, `set`, `real time`, rehearsal tag. Keep it working through S2; the `tick()` refactor into `live:tick` must not break it.
 - Helpers currently inline in `live.astro` script (`hm`, `hms`, `mss`, `dayLabel`, `nextAfter`, `daysUntil`): S2 should move them to `src/lib/live/format.ts` (pure) when windows need them.
 
-**S2 (~90k) — engine + stage + text windows.** Canvas scaler, `Window.astro`, AGENDA / UP NEXT / CLOCK, `Overlay.astro` (before/idle/after), stubs for NOW/UTILITY/TICKER, `live:tick` contract, wake lock, fullscreen, noindex. DoD: `/live?now=17:49&speed=60` shows six windows in a scaled 16:9 grid, segment flips at 17:50, AGENDA states update, after 19:00 counts up + blinks; `pnpm typecheck && pnpm lint` green. Commit.
+**S2 (~90k) — engine + stage + text windows.** Canvas scaler, `Window.astro`, AGENDA / UP NEXT / CLOCK, `Overlay.astro` (before/idle/after), stubs for NOW/UTILITY/TICKER, `live:tick` contract, wake lock, noindex. DoD: `/live?now=17:49&speed=60` shows six windows in a scaled 16:9 grid, segment flips at 17:50, AGENDA states update, after 19:00 counts up + blinks; `pnpm typecheck && pnpm lint` green. Commit.
 
 **S2 — DONE 2026-09-29.** Notes for S3–S5:
 
@@ -142,7 +142,7 @@ Estimates include ~25k fixed overhead. Target 60–100k each. S1 → S2 → {S3 
 - `src/lib/live/format.ts`: `clock`, `hm`, `hms`, `mss`, `dayLabel`, `nextAfter(all, date)`, `daysUntil`.
 - `Window.astro` props `{ title, name }`; `name` is the grid-area. Canvas grid + row px live in `live.css` (`.canvas`). S3 restyles `.win`, `.win-title`, `.win-title-buttons`, `.overlay`, `.ticker`; keep the selectors.
 - live.astro fills: `[data-agenda] li[data-state]`, `[data-now-item]`, `[data-upnext-label|item|at]`, `[data-clock-time|left]`, `[data-utility-next]`, `[data-ticker-track] > span[data-state]`, `[data-overlay][data-phase]` + `[data-overlay-title|main|sub]`. Stubs: `Now.astro` (`[data-now-deck]` hosts reveal, S4), `Utility.astro` (`[data-utility-qr]`, S5), `Ticker.astro` (track is built once per schedule; S5 duplicates it for the scroll), `Overlay.astro` (`[data-overlay-qr]`, S5).
-- Layout owns scaler / wake lock / `f`+click fullscreen. Dev panel is in a `slot="outside"` so it's not scaled, and is omitted from the prod build.
+- Layout owns scaler / wake lock. Fullscreen is browser-native. Dev panel is in a `slot="outside"` so it's not scaled, and is omitted from the prod build.
 - After-overrun blink is in `live.css` (`.overlay[data-phase='after'] .overlay-sub`); S3 can restyle but keep it blinking.
 
 **S3 (~70k) — y2k chrome.** `live.css`, `Window.astro`, starfield, bevels, counter, blink, pixel titles, reduced-motion handling + `?motion=1`. Touches no other window component. Sub-branch `jordan/live-chrome`, merge back.
@@ -167,5 +167,5 @@ Each session starts with: read this doc, `git log --oneline -15`, and the files 
 
 - `/live?date=2026-10-01&now=17:25&speed=60` end-to-end on the actual laptop that will AirPlay
 - Reduce Motion off on that laptop, or use `?motion=1`
-- Press `f`; confirm wake lock (no screen sleep in 5 min)
+- Enter browser fullscreen; confirm wake lock (no screen sleep in 5 min)
 - Phone-scan the Discord QR from across the room
