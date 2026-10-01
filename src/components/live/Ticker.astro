@@ -1,7 +1,8 @@
 ---
 // AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md
-// S2 stub. S5 adds the duplicated scrolling track. live.astro fills [data-ticker-track] on
-// schedule pick and marks the current segment with data-state="now".
+// Bottom strip. `src/lib/live/ticker.ts` builds the duplicated run into [data-ticker-track]
+// on schedule pick, tags the current segment data-state="now", and handles the
+// reduced-motion paging fallback. The fixed AGENDA tab is `.ticker::before`.
 ---
 
 <div class="ticker" data-window="ticker" style="grid-area: ticker">

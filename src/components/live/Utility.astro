@@ -1,14 +1,18 @@
 ---
 // AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md
-// S2 stub. S5 adds the Discord QR and floor/bathroom note. live.astro sets [data-utility-next].
+// INFO window: Discord QR (build-time SVG), floor/bathroom note, next event date.
+// live.astro sets [data-utility-next]. No wifi, no repo QR (public page).
 import Window from './Window.astro';
+import { DISCORD_QR_SVG } from '../../lib/live/qr';
 ---
 
 <Window title="INFO" name="utility">
 	<div class="utility">
-		<div class="utility-qr" data-utility-qr></div>
+		<div class="utility-qr" data-utility-qr set:html={DISCORD_QR_SVG} />
 		<div class="utility-text">
-			<div>{/* TODO(jordan): floor/bathroom note (S5) */}</div>
+			<div class="utility-discord"><b>DISCORD</b> scan to join</div>
+			{/* TODO(jordan): floor/bathroom note text */}
+			<div class="utility-note"><b>HERE</b> <span>Restrooms: ask a host</span></div>
 			<div class="utility-next"><b>NEXT</b> <span data-utility-next></span></div>
 		</div>
 	</div>

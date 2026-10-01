@@ -203,6 +203,15 @@ ASCII logo (from seventh-event slides, 114 cols × 10 rows, keep verbatim):
 
 **S5 (~60k) — UTILITY + TICKER.** `qr.ts`, `Utility.astro`, `Ticker.astro` (duplicated track, `translateX(0 → -50%)`, ▶ NOW tag), QR into after-overlay. DoD: QR scans on a phone, ticker loops ~60s w/o jank. Sub-branch `jordan/live-utility`.
 
+**S5 — DONE 2026-09-30 on `jordan/live-dashboard` (no sub-branch).** Notes for S6:
+
+- `src/lib/live/qr.ts` exports `DISCORD_QR_SVG` (uqr `renderSVG`, ecc M, border 0, ink/paper colours). Rendered server-side via `set:html` into `[data-utility-qr]` (INFO) and `[data-overlay-qr]` (overlay). Overlay QR is hidden in `before` by CSS (`.overlay[data-phase='before'] .overlay-qr`), shown in `idle` / `after`. Decoded in headless Chrome with jsQR → the invite URL; still phone-scan from across the room at rehearsal.
+- `src/lib/live/ticker.ts` (client-only) exports `mountTicker()`; `live.astro` calls it after `mountNow()` and no longer builds ticker items. On schedule change it builds one `.ticker-run` (items `[data-index]` + `.ticker-cta`), measures `offsetWidth` on `document.fonts.ready`, tiles `max(2, ceil(strip/run)+1)` copies, sets `--ticker-run` and `.is-ready`. CSS `@keyframes ticker-scroll` → `translateX(calc(-1 * var(--ticker-run)))`, 60s linear infinite (measured 60.0s/loop, ~68px/s for the 5-item Event 8 agenda). `segmentChanged` re-tags `data-state="now"` in every copy; non-`during` phases clear it.
+- Reduced motion (unless `?motion=1`): the S3 blanket rule kills the animation; `ticker.ts` then sets an inline `translateX(-page × strip width)` on every tick, paging every 8s wall-clock. `?motion=1` clears the inline transform.
+- `Utility.astro`: three lines — "DISCORD scan to join", "HERE <note>" (`TODO(jordan)` placeholder text "Restrooms: ask a host"), "NEXT <date>". Labels stay inline `<b>` (S3 style).
+- Headless-screenshot caveat: `--virtual-time-budget` screenshots do not advance CSS animations; verify motion via CDP `getComputedStyle(...).transform` over real time (S5 did), not by diffing screenshots.
+- Port 4321 was held by another dev server during S5; `pnpm preview` fell back to 4322. Check the preview log before pointing a browser at it.
+
 **S6 (~70k) — integrate + rehearse + hand off.** Merge S3–S5, fix seams, full rehearsal `/live?date=2026-10-01&now=17:25&speed=60` before → 5 segments → after, no console errors, single interval confirmed; audit AI headers on every file; finalize glue list; `format:check && lint && typecheck && build`; draft PR w/ exemption note.
 
 Each session starts with: read this doc, `git log --oneline -15`, and the files named for that session. Nothing else needs carrying over.

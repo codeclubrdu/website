@@ -561,9 +561,27 @@ body {
 	z-index: 1;
 }
 .ticker-track {
+	display: flex;
+	flex: 0 0 auto;
+	padding-left: 24px;
+	will-change: transform;
+}
+.ticker-track.is-ready {
+	animation: ticker-scroll 60s linear infinite;
+}
+@keyframes ticker-scroll {
+	to {
+		transform: translateX(calc(-1 * var(--ticker-run)));
+	}
+}
+/* One run = agenda + CTA; trailing padding is the gap before the next copy. */
+.ticker-run {
 	display: inline-flex;
 	gap: 64px;
-	padding-left: 24px;
+	padding-right: 64px;
+}
+.ticker-cta::before {
+	content: '★ ';
 }
 .ticker-track [data-state='now'] {
 	background: var(--ink);
@@ -624,6 +642,10 @@ body {
 	color: var(--ink);
 	opacity: 1;
 	animation: blink 1s steps(2, start) infinite;
+}
+/* QR only when there's something to do after reading: after / idle. `before` stays clean. */
+.overlay[data-phase='before'] .overlay-qr {
+	display: none;
 }
 .overlay-qr:not(:empty) {
 	width: 160px;

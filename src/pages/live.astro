@@ -65,6 +65,7 @@ import Brand from '../components/live/Brand.astro';
 	import { clock, dayLabel, daysUntil, hm, hms, mss, nextAfter } from '../lib/live/format';
 	import { dispatchTick, LIVE_TICK, type LiveTick } from '../lib/live/tick';
 	import { mountNow } from '../lib/live/now';
+	import { mountTicker } from '../lib/live/ticker';
 
 	const all = JSON.parse(
 		document.querySelector('[data-live-schedule]')?.textContent ?? '[]',
@@ -112,13 +113,11 @@ import Brand from '../components/live/Brand.astro';
 	};
 
 	const agendaList = q<HTMLOListElement>('[data-agenda]');
-	const tickerTrack = q('[data-ticker-track]');
 	const overlay = q('[data-overlay]');
 
-	/** Rebuild the per-schedule markup (agenda rows, ticker items). Runs on schedule change only. */
+	/** Rebuild the per-schedule markup (agenda rows). Runs on schedule change only. */
 	const buildSchedule = (schedule: LiveSchedule | null): void => {
 		agendaList.replaceChildren();
-		tickerTrack.replaceChildren();
 		text('[data-brand-event]', schedule?.event.toUpperCase() ?? '');
 		text('[data-brand-place]', schedule?.place.toUpperCase() ?? '');
 		if (!schedule) return;
@@ -130,14 +129,7 @@ import Brand from '../components/live/Brand.astro';
 			item.textContent = seg.item;
 			li.append(t, item);
 			agendaList.append(li);
-
-			const tk = document.createElement('span');
-			tk.textContent = `${hm(seg.start)} ${seg.item}`;
-			tickerTrack.append(tk);
 		}
-		const cta = document.createElement('span');
-		cta.textContent = schedule.callToAction;
-		tickerTrack.append(cta);
 	};
 
 	const showOverlay = (phase: string, title: string, main: string, sub: string): void => {
@@ -205,9 +197,6 @@ import Brand from '../components/live/Brand.astro';
 				(li as HTMLElement).dataset.state =
 					j < i ? 'done' : j === i ? 'now' : j === i + 1 ? 'next' : 'later';
 			});
-			Array.from(tickerTrack.children).forEach((el, j) => {
-				(el as HTMLElement).dataset.state = j === i ? 'now' : '';
-			});
 			text('[data-now-item]', cur.item);
 			text('[data-upnext-label]', next ? 'NEXT' : 'THEN');
 			text('[data-upnext-item]', next ? next.item : "That's a wrap");
@@ -219,6 +208,7 @@ import Brand from '../components/live/Brand.astro';
 
 	document.addEventListener(LIVE_TICK, (e) => render(e.detail));
 	mountNow(); // registers its live:tick listener before the first tick
+	mountTicker();
 
 	tick();
 	setInterval(tick, 1000);
