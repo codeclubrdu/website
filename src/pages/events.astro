@@ -11,10 +11,19 @@ import { upcomingEvents, pastEvents, formatDay, formatRange } from '../data/even
 			{upcomingEvents.length === 0 && <p>No upcoming events yet — check back soon!</p>}
 			{
 				upcomingEvents.map(({ event, date, time, place, address, city, meetupLink, details }) => (
-					<article data-event-card data-date={date} class="mb-5">
+					<article
+						data-event-card
+						data-date={date}
+						data-start={details.agenda[0]?.start}
+						data-end={details.agenda.at(-1)?.end}
+						class="mb-5"
+					>
 						<h3>
 							{event} · {formatDay(date)} · {time}
 						</h3>
+						<a data-live-link href="/live" hidden class="mb-3 inline-block font-semibold underline">
+							Happening now — open the live dashboard →
+						</a>
 						<div>{place}</div>
 						<div>{address}</div>
 						<div class="mb-3">{city}</div>
@@ -89,9 +98,13 @@ import { upcomingEvents, pastEvents, formatDay, formatRange } from '../data/even
 
 <script>
 	const today = new Date().toLocaleDateString('sv');
+	const hhmm = new Date().toTimeString().slice(0, 5);
 	const pastList = document.querySelector('[data-past-list]');
 	document.querySelectorAll<HTMLElement>('#events [data-event-card]').forEach((card) => {
-		const date = card.dataset.date;
+		const { date, start, end } = card.dataset;
+		if (date === today && start && end && hhmm >= start && hhmm < end) {
+			card.querySelector('[data-live-link]')?.removeAttribute('hidden');
+		}
 		if (!date || date >= today) return;
 		const badge = card.querySelector('[data-badge]');
 		if (badge) {
