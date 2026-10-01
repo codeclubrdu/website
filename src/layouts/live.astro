@@ -1,0 +1,75 @@
+---
+// AI-coded (Claude) under the owner's /live exemption — see CONTRIBUTING.md
+// Bare layout for /live: no site Header, no max-width, noindex.
+// Owns the 1920×1080 canvas scaler and the screen wake lock. Fullscreen is the browser's own.
+import '../styles/live.css';
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="robots" content="noindex, nofollow" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Code Club RDU — live</title>
+	</head>
+	<body>
+		<div class="canvas" data-live-canvas>
+			<slot />
+			<div class="grain" aria-hidden="true"></div>
+		</div>
+		<slot name="outside" />
+	</body>
+</html>
+
+<script>
+	const CANVAS_W = 1920;
+	const CANVAS_H = 1080;
+	const canvas = document.querySelector<HTMLElement>('[data-live-canvas]')!;
+
+	// Letterboxed uniform scale, centered. Layout inside is fixed px at 1920×1080.
+	const fit = (): void => {
+		const scale = Math.min(innerWidth / CANVAS_W, innerHeight / CANVAS_H);
+		const x = (innerWidth - CANVAS_W * scale) / 2;
+		const y = (innerHeight - CANVAS_H * scale) / 2;
+		canvas.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+	};
+	fit();
+	addEventListener('resize', fit);
+
+	// `?motion=1` forces animation on even when the OS reports prefers-reduced-motion
+	// (macOS Reduce Motion propagates to the browser and would silently freeze the chrome).
+	if (new URLSearchParams(location.search).get('motion') === '1') {
+		document.documentElement.dataset.motion = 'force';
+	}
+
+	// Scale every ASCII logo to its parent's width (font metrics decide the natural size).
+	const fitAscii = (): void => {
+		for (const pre of document.querySelectorAll<HTMLElement>('[data-ascii]')) {
+			const box = pre.parentElement!;
+			pre.style.transform = '';
+			pre.style.height = '';
+			const scale = Math.min(box.clientWidth / pre.offsetWidth, 1.6);
+			pre.style.transform = `scale(${scale})`;
+			pre.style.height = `${pre.offsetHeight * scale}px`;
+		}
+	};
+	fitAscii();
+	void document.fonts.ready.then(fitAscii);
+
+	// Keep the TV awake for the whole meetup. Re-request after tab/AirPlay visibility flips.
+	let lock: WakeLockSentinel | null = null;
+	const wake = async (): Promise<void> => {
+		if (!('wakeLock' in navigator) || document.visibilityState !== 'visible') return;
+		try {
+			lock = await navigator.wakeLock.request('screen');
+		} catch {
+			lock = null; // denied (battery saver, not secure context) — nothing to do
+		}
+	};
+	void wake();
+	document.addEventListener('visibilitychange', () => {
+		if (document.visibilityState === 'visible' && (lock === null || lock.released)) void wake();
+	});
+</script>

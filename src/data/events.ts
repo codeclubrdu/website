@@ -1,5 +1,7 @@
+/** `start` / `end` are 24h 'HH:MM' local (America/New_York). */
 export type Agenda = {
-	time: string;
+	start: string;
+	end: string;
 	item: string;
 };
 
@@ -36,6 +38,15 @@ export const formatDay = (date: string): string => {
 	return `${monthName} ${day}${ordinal(day)}`;
 };
 
+const format12h = (hhmm: string): string => {
+	const [h, m] = hhmm.split(':').map(Number);
+	return `${((h + 11) % 12) + 1}:${String(m).padStart(2, '0')}`;
+};
+
+/** '17:30','17:50' → '5:30–5:50' */
+export const formatRange = (start: string, end: string): string =>
+	`${format12h(start)}–${format12h(end)}`;
+
 export const events: Event[] = [
 	{
 		event: 'Event 8',
@@ -52,11 +63,11 @@ export const events: Event[] = [
 				'Clone the Battleship repo before the event — hop in the Discord if you need help getting set up.',
 			],
 			agenda: [
-				{ time: '5:30–5:50', item: 'Social + pizza' },
-				{ time: '5:50–5:55', item: 'Cool tech presentation' },
-				{ time: '5:55–6:00', item: 'Welcome and goal setting' },
-				{ time: '6:00–6:45', item: 'Projects breakout' },
-				{ time: '6:45–7:00', item: 'Wrap up' },
+				{ start: '17:30', end: '17:50', item: 'Social + pizza' },
+				{ start: '17:50', end: '17:55', item: 'Cool tech presentation' },
+				{ start: '17:55', end: '18:00', item: 'Welcome and goal setting' },
+				{ start: '18:00', end: '18:45', item: 'Projects breakout' },
+				{ start: '18:45', end: '19:00', item: 'Wrap up' },
 			],
 			callToAction: 'Want to share something cool as a talk or lead a project? DM me!',
 		},
@@ -79,11 +90,11 @@ export const events: Event[] = [
 				`Raffle drawing at this event: post a photo of a flyer you hung up or bring a friend to earn entries. Prize is a wireless keyboard/controller!`,
 			],
 			agenda: [
-				{ time: '5:30–5:50', item: 'Social + pizza + Find the bug challenge' },
-				{ time: '5:50–5:55', item: 'Find the bug walkthrough' },
-				{ time: '5:55–6:00', item: 'Welcome and goal setting' },
-				{ time: '6:00–6:45', item: 'Projects breakout (battleship part 2)' },
-				{ time: '6:45–7:00', item: 'Wrap up and raffle draw' },
+				{ start: '17:30', end: '17:50', item: 'Social + pizza + Find the bug challenge' },
+				{ start: '17:50', end: '17:55', item: 'Find the bug walkthrough' },
+				{ start: '17:55', end: '18:00', item: 'Welcome and goal setting' },
+				{ start: '18:00', end: '18:45', item: 'Projects breakout (battleship part 2)' },
+				{ start: '18:45', end: '19:00', item: 'Wrap up and raffle draw' },
 			],
 			callToAction: 'Want to share something cool as a talk or lead a project? DM me!',
 		},
@@ -108,11 +119,11 @@ export const events: Event[] = [
 				'For returning attendees we are meeting on the 13th floor, not the 4th.',
 			],
 			agenda: [
-				{ time: '5:30–5:50', item: 'Social + pizza + Find the bug challenge' },
-				{ time: '5:50–5:55', item: 'Find the bug walkthrough' },
-				{ time: '5:55–6:05', item: 'Projects kickoff' },
-				{ time: '6:05–6:55', item: 'Projects breakout' },
-				{ time: '6:55–7:00', item: 'Wrap up and group goal set' },
+				{ start: '17:30', end: '17:50', item: 'Social + pizza + Find the bug challenge' },
+				{ start: '17:50', end: '17:55', item: 'Find the bug walkthrough' },
+				{ start: '17:55', end: '18:05', item: 'Projects kickoff' },
+				{ start: '18:05', end: '18:55', item: 'Projects breakout' },
+				{ start: '18:55', end: '19:00', item: 'Wrap up and group goal set' },
 			],
 			callToAction: 'Want to share something cool as a talk or lead a project? DM me!',
 		},

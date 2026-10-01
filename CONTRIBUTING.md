@@ -45,3 +45,5 @@ This project does not accept contributions generated wholly or in part by AI/LLM
 **If you used AI to learn.** That's great — that's what the tools are for, I would even encourge this behavior if you have already struggled with finding a solution for a time. But before you open a PR, throw the AI output away and write the everything yourself. Another option is to ask in the Discord!
 
 **Enforcement.** PRs suspected of being AI-generated will be closed without detailed review. Repeated violations get you blocked from the repo. If you're unsure whether something crosses the line, just ask.
+
+**Exemption: `/live`.** The in-meeting dashboard at `/live` (`src/pages/live.astro`, `src/layouts/live.astro`, `src/components/live/`, `src/lib/live/`, `src/styles/live.css`, `src/data/live/`, `src/data/links.ts`) is AI-coded with the owner's explicit sign-off. Every file there carries an `AI-coded (Claude)` header. This exemption covers only those paths and does not extend to the rest of the repo.

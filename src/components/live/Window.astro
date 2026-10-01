@@ -1,0 +1,15 @@
+---
+// AI-coded (Claude) under the owner's /live exemption — see CONTRIBUTING.md
+// 1-bit OS window shell: paper border, hard shadow, striped System-7 titlebar, two square buttons.
+type Props = { title: string; name: string };
+const { title, name } = Astro.props;
+---
+
+<section class="win" data-window={name} style={`grid-area: ${name}`}>
+	<header class="win-title">
+		<span class="win-title-text">{title}</span>
+		<span class="win-title-lines"></span>
+		<span class="win-title-buttons" aria-hidden="true"><i></i><i class="x"></i></span>
+	</header>
+	<div class="win-body"><slot /></div>
+</section>

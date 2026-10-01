@@ -1,0 +1,250 @@
+---
+// AI-coded (Claude) under the owner's /live exemption — see CONTRIBUTING.md
+// The page: embeds every schedule as JSON, runs the one 1s interval, dispatches `live:tick`,
+// and fills the six windows + overlay from that tick. Components are markup-only.
+import Live from '../layouts/live.astro';
+import { schedules } from '../lib/live/schedule';
+import Agenda from '../components/live/Agenda.astro';
+import Now from '../components/live/Now.astro';
+import UpNext from '../components/live/UpNext.astro';
+import Clock from '../components/live/Clock.astro';
+import Utility from '../components/live/Utility.astro';
+import Ticker from '../components/live/Ticker.astro';
+import Overlay from '../components/live/Overlay.astro';
+import Brand from '../components/live/Brand.astro';
+---
+
+<Live>
+	<script
+		is:inline
+		type="application/json"
+		data-live-schedule
+		set:html={JSON.stringify(schedules)}
+	/>
+	<Brand />
+	<Now />
+	<Agenda />
+	<UpNext />
+	<Clock />
+	<Utility />
+	<Ticker />
+	<Overlay />
+
+	{/* Dev-only clock panel. Rendered under `pnpm dev` only; absent from the production build. */}
+	{
+		import.meta.env.DEV && (
+			<form slot="outside" class="dev-panel" data-live-dev hidden>
+				<label>
+					event
+					<select name="date">
+						{schedules.map((s) => (
+							<option value={s.date}>
+								{s.event} · {s.date}
+							</option>
+						))}
+					</select>
+				</label>
+				<label>
+					time <input name="time" type="time" value="17:52" />
+				</label>
+				<label>
+					speed <input name="speed" type="number" value="1" min="1" style="width: 4em" />
+				</label>
+				<button type="submit">set</button>
+				<button type="button" data-real>
+					real time
+				</button>
+				<span data-rehearsal />
+			</form>
+		)
+	}
+</Live>
+
+<script>
+	import {
+		computeState,
+		localMs,
+		nextAfter,
+		selectSchedule,
+		type LiveSchedule,
+	} from '../lib/live/schedule';
+	import { clock, dayLabel, daysUntil, hm, hms, mss } from '../lib/live/format';
+	import { dispatchTick, LIVE_TICK, type LiveTick } from '../lib/live/tick';
+	import { mountNow } from '../lib/live/now';
+	import { mountTicker } from '../lib/live/ticker';
+
+	const all = JSON.parse(
+		document.querySelector('[data-live-schedule]')?.textContent ?? '[]',
+	) as LiveSchedule[];
+	const params = new URLSearchParams(location.search);
+	const localISO = (): string => new Date().toLocaleDateString('sv');
+	let todayISO = localISO();
+
+	let picked = selectSchedule(all, todayISO, params.get('date'));
+
+	// Rehearsal clock: anchor virtual time to HH:MM on the picked event's date, scaled by speed.
+	// A rehearsal is virtually the event day, so 'idle' never shows while anchored.
+	let anchor: number | null = null;
+	let speed = 1;
+	let realStart = Date.now();
+	const setClock = (hhmm: string | null, spd: number): void => {
+		speed = spd || 1;
+		realStart = Date.now();
+		anchor =
+			picked && hhmm && /^\d{2}:\d{2}$/.test(hhmm) ? localMs(picked.schedule.date, hhmm) : null;
+	};
+	setClock(params.get('now'), Number(params.get('speed') ?? 1));
+
+	const virtualNow = (): number =>
+		anchor === null ? Date.now() : anchor + (Date.now() - realStart) * speed;
+
+	let lastKey = '';
+	const tick = (): void => {
+		// Date rollover while the TV stays on: re-pick so the day-before 'idle' becomes 'before'.
+		const today = localISO();
+		if (today !== todayISO) {
+			todayISO = today;
+			picked = selectSchedule(all, todayISO, params.get('date'));
+		}
+		const now = virtualNow();
+		const schedule = picked?.schedule ?? null;
+		const state =
+			picked && schedule ? computeState(schedule, now, picked.eventDay || anchor !== null) : null;
+		const key = `${schedule?.date ?? ''}/${state?.phase ?? ''}/${state?.segmentIndex ?? ''}`;
+		const segmentChanged = key !== lastKey;
+		lastKey = key;
+		dispatchTick({ now, schedule, state, all, segmentChanged });
+	};
+
+	const q = <T extends HTMLElement = HTMLElement>(sel: string): T =>
+		document.querySelector<T>(sel)!;
+	const text = (sel: string, value: string): void => {
+		const el = q(sel);
+		if (el.textContent !== value) el.textContent = value;
+	};
+
+	const agendaList = q<HTMLOListElement>('[data-agenda]');
+	const overlay = q('[data-overlay]');
+
+	/** Swap in the picked schedule's build-time agenda rows. Runs on schedule change only. */
+	const buildSchedule = (schedule: LiveSchedule | null): void => {
+		text('[data-brand-event]', schedule?.event.toUpperCase() ?? '');
+		text('[data-brand-place]', schedule?.place.toUpperCase() ?? '');
+		const rows = schedule
+			? document.querySelector<HTMLTemplateElement>(`[data-agenda-rows="${schedule.date}"]`)
+			: null;
+		if (rows) agendaList.replaceChildren(rows.content.cloneNode(true));
+		else agendaList.replaceChildren();
+	};
+
+	const showOverlay = (phase: string, title: string, main: string, sub: string): void => {
+		overlay.hidden = false;
+		overlay.dataset.phase = phase;
+		text('[data-overlay-title]', title);
+		text('[data-overlay-main]', main);
+		text('[data-overlay-sub]', sub);
+	};
+
+	let builtFor: string | null = null;
+	const render = ({ now, schedule, state, all, segmentChanged }: LiveTick): void => {
+		const dateKey = schedule?.date ?? null;
+		if (dateKey !== builtFor) {
+			buildSchedule(schedule);
+			builtFor = dateKey;
+		}
+
+		if (!schedule || !state) {
+			showOverlay('idle', 'Code Club RDU', 'See you next time', '');
+			return;
+		}
+		const { agenda } = schedule;
+		const upcoming = nextAfter(all, schedule.date);
+		text('[data-utility-next]', upcoming ? dayLabel(upcoming) : 'TBA');
+
+		switch (state.phase) {
+			case 'before':
+				showOverlay(
+					'before',
+					`Code Club RDU · ${schedule.event}`,
+					`Starts ${hm(agenda[0].start)} — in ${hms(state.msToSegmentEnd)}`,
+					schedule.place,
+				);
+				return;
+			case 'idle':
+				showOverlay(
+					'idle',
+					'Code Club RDU',
+					`Next: ${dayLabel(schedule)}`,
+					daysUntil(state.msToSegmentEnd),
+				);
+				return;
+			case 'after': {
+				const over = -state.msToSegmentEnd;
+				showOverlay(
+					'after',
+					'Thanks for coming!',
+					upcoming ? `Next: ${dayLabel(upcoming)}` : 'See you next time',
+					over < 10 * 60_000 ? `running over ${mss(over)}` : '',
+				);
+				return;
+			}
+			case 'during':
+				break;
+		}
+
+		overlay.hidden = true;
+		const i = state.segmentIndex!;
+		const cur = agenda[i];
+		const next = agenda[i + 1];
+
+		if (segmentChanged) {
+			agendaList.querySelectorAll<HTMLElement>(':scope > li').forEach((li, j) => {
+				li.dataset.state = j < i ? 'done' : j === i ? 'now' : j === i + 1 ? 'next' : 'later';
+			});
+			text('[data-now-item]', cur.item);
+			text('[data-upnext-label]', next ? 'NEXT' : 'THEN');
+			text('[data-upnext-item]', next ? next.item : "That's a wrap");
+			text('[data-upnext-at]', hm(next ? next.start : cur.end));
+		}
+		text('[data-clock-time]', clock(now));
+		text('[data-clock-left]', mss(state.msToSegmentEnd));
+	};
+
+	document.addEventListener(LIVE_TICK, (e) => render(e.detail));
+	mountNow(); // registers its live:tick listener before the first tick
+	mountTicker();
+
+	tick();
+	setInterval(tick, 1000);
+
+	if (import.meta.env.DEV) {
+		const form = q<HTMLFormElement>('[data-live-dev]');
+		const dateSel = form.elements.namedItem('date') as HTMLSelectElement;
+		const timeIn = form.elements.namedItem('time') as HTMLInputElement;
+		const speedIn = form.elements.namedItem('speed') as HTMLInputElement;
+		form.hidden = false;
+		if (picked) dateSel.value = picked.schedule.date;
+		if (params.get('now')) timeIn.value = params.get('now')!;
+		speedIn.value = String(speed);
+
+		const tag = form.querySelector<HTMLElement>('[data-rehearsal]')!;
+		const showTag = (): void => {
+			tag.textContent = anchor === null ? 'real clock' : `rehearsal ×${speed}`;
+		};
+		showTag();
+
+		form.addEventListener('submit', (e) => {
+			e.preventDefault();
+			picked = selectSchedule(all, todayISO, dateSel.value);
+			setClock(timeIn.value, Number(speedIn.value));
+			showTag();
+			tick();
+		});
+		form.querySelector('[data-real]')!.addEventListener('click', () => {
+			picked = selectSchedule(all, todayISO, null);
+			setClock(null, 1);
+			showTag();
+			tick();
+		});
+	}
+</script>

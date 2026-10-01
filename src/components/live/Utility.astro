@@ -1,0 +1,21 @@
+---
+// AI-coded (Claude) under the owner's /live exemption — see CONTRIBUTING.md
+// INFO window: Discord QR (build-time SVG), floor/bathroom note, next event date.
+// live.astro sets [data-utility-next]. No wifi, no repo QR (public page).
+import Window from './Window.astro';
+import { DISCORD_QR_SVG } from '../../lib/live/qr';
+---
+
+<Window title="INFO" name="utility">
+	<div class="utility">
+		<div class="utility-qr" data-utility-qr set:html={DISCORD_QR_SVG} />
+		<div class="utility-text">
+			<div class="utility-discord"><b>DISCORD</b> scan to join</div>
+			<div class="utility-note">
+				<b>HERE</b>
+				<span>Restrooms: out the double doors, left, then right down the hall — on the right</span>
+			</div>
+			<div class="utility-next"><b>NEXT</b> <span data-utility-next></span></div>
+		</div>
+	</div>
+</Window>

@@ -1,0 +1,25 @@
+---
+// AI-coded (Claude) under the owner's /live exemption — see CONTRIBUTING.md
+// Full-canvas overlay for the waiting phases (before / idle / after). Hidden while `during`.
+// One big window frame: titlebar (title line), ASCII logo, main line, sub line.
+// live.astro sets data-phase and the three text lines every tick. The Discord QR shows in
+// `after` and `idle` only (CSS); `before` keeps the countdown clean.
+import Logo from './Logo.astro';
+import { DISCORD_QR_SVG } from '../../lib/live/qr';
+---
+
+<div class="overlay" data-overlay hidden>
+	<div class="overlay-box win">
+		<header class="win-title">
+			<span class="win-title-text" data-overlay-title></span>
+			<span class="win-title-lines"></span>
+			<span class="win-title-buttons" aria-hidden="true"><i></i><i class="x"></i></span>
+		</header>
+		<div class="overlay-in">
+			<div class="overlay-logo"><Logo /></div>
+			<div class="overlay-main" data-overlay-main></div>
+			<div class="overlay-sub" data-overlay-sub></div>
+			<div class="overlay-qr" data-overlay-qr set:html={DISCORD_QR_SVG} />
+		</div>
+	</div>
+</div>
