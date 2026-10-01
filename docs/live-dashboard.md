@@ -206,7 +206,7 @@ ASCII logo (from seventh-event slides, 114 cols × 10 rows, keep verbatim):
 - `src/lib/live/now.ts` (client-only, imports reveal + `reveal.js/reveal.css` + markdown plugin) exports `mountNow()`. `live.astro` calls it right before the first `tick()` so its `live:tick` listener never misses `segmentChanged`. On change: `destroy()`, clear `.slides`, clone the template, `new Reveal(el, opts).initialize()`. Phases other than `during`, or a missing template, tear down and show the idle logo. Idle is hidden with `visibility: hidden` (`.now-deck[data-has-deck='true']`), not `display: none`, so `[data-ascii]` still measures.
 - Reveal config as specced plus `width: 960, height: 660, margin: 0.06, backgroundTransition: 'none'`; reveal has no theme loaded, the monochrome slide type lives in `live.css` under "NOW deck". Headings: h1 96px / h2 64px / h3 44px, body 36px.
 - Reveal 6 ships its own types (`RevealApi`, `RevealConfig` from `reveal.js`); `@types/reveal.js` is unused and can be dropped in S6 (lockfile touch).
-- Placeholder decks 00–04 exist, each with a `TODO(jordan)` comment.
+- Placeholder decks 00–04 existed with `TODO(jordan)` comments; real content for 01–04 landed post-S6, 00 was removed (idle logo during social).
 
 **S5 (~60k) — UTILITY + TICKER.** `qr.ts`, `Utility.astro`, `Ticker.astro` (duplicated track, `translateX(0 → -50%)`, ▶ NOW tag), QR into after-overlay. DoD: QR scans on a phone, ticker loops ~60s w/o jank. Sub-branch `jordan/live-utility`.
 
@@ -235,7 +235,7 @@ Each session starts with: read this doc, `git log --oneline -15`, and the files 
 
 Final as of S6. Every item below has a matching `TODO(jordan)` marker in the file (`grep -rn 'TODO(jordan)' src`).
 
-- Deck content: `src/data/live/2026-10-01/00.md` … `04.md` (reveal markdown, `---` between slides; each currently says PLACEHOLDER)
+- Deck content: `src/data/live/2026-10-01/01.md` … `04.md` (reveal markdown, `---` between slides). No `00.md` on purpose: Social + pizza shows the idle ASCII logo (missing deck → idle).
 - Floor/bathroom note text: `src/components/live/Utility.astro` ("HERE" line, currently "Restrooms: ask a host")
 - Discord invite in `src/data/links.ts`: confirm non-expiring (it is the QR on INFO + the after overlay)
 - Event 9 entry in `src/data/events.ts` when known (drives "NEXT" in INFO and the after overlay)
