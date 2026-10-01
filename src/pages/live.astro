@@ -64,6 +64,7 @@ import Brand from '../components/live/Brand.astro';
 	import { computeState, localMs, selectSchedule, type LiveSchedule } from '../lib/live/schedule';
 	import { clock, dayLabel, daysUntil, hm, hms, mss, nextAfter } from '../lib/live/format';
 	import { dispatchTick, LIVE_TICK, type LiveTick } from '../lib/live/tick';
+	import { mountNow } from '../lib/live/now';
 
 	const all = JSON.parse(
 		document.querySelector('[data-live-schedule]')?.textContent ?? '[]',
@@ -217,6 +218,7 @@ import Brand from '../components/live/Brand.astro';
 	};
 
 	document.addEventListener(LIVE_TICK, (e) => render(e.detail));
+	mountNow(); // registers its live:tick listener before the first tick
 
 	tick();
 	setInterval(tick, 1000);

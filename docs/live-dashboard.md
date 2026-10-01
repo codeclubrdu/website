@@ -192,6 +192,15 @@ ASCII logo (from seventh-event slides, 114 cols × 10 rows, keep verbatim):
 
 **S4 (~80k) — NOW / reveal.js.** `Now.astro`, `decks.ts`, placeholder decks 00–04, destroy/re-init on segment change, NO SIGNAL. DoD: `?now=17:52&speed=30` plays deck 01, swaps at 17:55; delete a deck → NO SIGNAL; `pnpm preview` confirms reveal CSS bundles. Sub-branch `jordan/live-now`.
 
+**S4 — DONE 2026-09-30 on `jordan/live-dashboard` (no sub-branch).** Notes for S5–S6:
+
+- `src/lib/live/decks.ts` globs `src/data/live/<date>/<NN>.md` raw → `decks` map keyed `<date>/<NN>`; `deckKey(date, i)`. A file outside that path shape fails the build.
+- `Now.astro` embeds every deck once as `<template data-deck="<date>/<NN>"><section data-markdown><textarea data-template>`; the live `.reveal` host (`[data-now-reveal]`, `hidden` until a deck mounts) sits beside `[data-now-idle]` inside `[data-now-deck]`.
+- `src/lib/live/now.ts` (client-only, imports reveal + `reveal.js/reveal.css` + markdown plugin) exports `mountNow()`. `live.astro` calls it right before the first `tick()` so its `live:tick` listener never misses `segmentChanged`. On change: `destroy()`, clear `.slides`, clone the template, `new Reveal(el, opts).initialize()`. Phases other than `during`, or a missing template, tear down and show the idle logo. Idle is hidden with `visibility: hidden` (`.now-deck[data-has-deck='true']`), not `display: none`, so `[data-ascii]` still measures.
+- Reveal config as specced plus `width: 960, height: 660, margin: 0.06, backgroundTransition: 'none'`; reveal has no theme loaded, the monochrome slide type lives in `live.css` under "NOW deck". Headings: h1 96px / h2 64px / h3 44px, body 36px.
+- Reveal 6 ships its own types (`RevealApi`, `RevealConfig` from `reveal.js`); `@types/reveal.js` is unused and can be dropped in S6 (lockfile touch).
+- Placeholder decks 00–04 exist, each with a `TODO(jordan)` comment.
+
 **S5 (~60k) — UTILITY + TICKER.** `qr.ts`, `Utility.astro`, `Ticker.astro` (duplicated track, `translateX(0 → -50%)`, ▶ NOW tag), QR into after-overlay. DoD: QR scans on a phone, ticker loops ~60s w/o jank. Sub-branch `jordan/live-utility`.
 
 **S6 (~70k) — integrate + rehearse + hand off.** Merge S3–S5, fix seams, full rehearsal `/live?date=2026-10-01&now=17:25&speed=60` before → 5 segments → after, no console errors, single interval confirmed; audit AI headers on every file; finalize glue list; `format:check && lint && typecheck && build`; draft PR w/ exemption note.

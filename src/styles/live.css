@@ -295,6 +295,96 @@ body {
 	border-style: dashed;
 }
 
+/* ---- NOW deck (reveal.js, embedded; monochrome theme, reveal.css ships none) ---- */
+.now-deck[data-has-deck='true'] .now-idle {
+	visibility: hidden; /* keep layout so [data-ascii] measures; display:none would zero it */
+}
+.now-deck .reveal {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	font-family: var(--sans);
+	color: var(--paper);
+	background: #000;
+}
+.now-deck .reveal[hidden] {
+	display: none;
+}
+.now-deck .reveal .slides {
+	text-align: center;
+}
+.now-deck .reveal .slides section {
+	line-height: 1.25;
+	font-size: 36px;
+	font-weight: 500;
+}
+.now-deck .reveal h1,
+.now-deck .reveal h2,
+.now-deck .reveal h3 {
+	font-weight: 800;
+	line-height: 1.05;
+	letter-spacing: -0.01em;
+	margin: 0 0 0.5em;
+	text-wrap: balance;
+}
+.now-deck .reveal h1 {
+	font-size: 96px;
+}
+.now-deck .reveal h2 {
+	font-size: 64px;
+}
+.now-deck .reveal h3 {
+	font-size: 44px;
+}
+.now-deck .reveal p,
+.now-deck .reveal ul,
+.now-deck .reveal ol {
+	margin: 0 0 0.6em;
+}
+.now-deck .reveal ul,
+.now-deck .reveal ol {
+	display: inline-block;
+	text-align: left;
+}
+.now-deck .reveal li {
+	margin: 0.2em 0;
+}
+.now-deck .reveal a {
+	color: inherit;
+	text-decoration: underline;
+}
+.now-deck .reveal strong {
+	font-weight: 800;
+}
+.now-deck .reveal code,
+.now-deck .reveal pre {
+	font-family: var(--mono);
+}
+.now-deck .reveal pre {
+	font-size: 24px;
+	line-height: 1.3;
+	text-align: left;
+	display: inline-block;
+	max-width: 95%;
+	padding: 16px 20px;
+	border: 2px solid var(--grey);
+	white-space: pre-wrap;
+}
+.now-deck .reveal img {
+	max-width: 95%;
+	max-height: 60vh;
+	border: 3px solid var(--paper);
+}
+.now-deck .reveal blockquote {
+	border-left: 6px solid var(--paper);
+	padding-left: 0.6em;
+	margin: 0 auto 0.6em;
+	width: 80%;
+	text-align: left;
+	font-style: italic;
+}
+
 /* ---- UP NEXT ---- */
 .upnext-label {
 	font: 400 15px var(--pix);

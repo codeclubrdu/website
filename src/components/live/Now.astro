@@ -1,9 +1,12 @@
 ---
 // AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md
-// S2 stub. S4 replaces the body with the reveal.js deck host; keep [data-now-item].
-// `.now-idle` is the missing-deck branch (S4 shows it when the segment has no deck file).
+// NOW window: current segment title + reveal.js deck host. Every deck is embedded once as a
+// <template data-deck="<date>/<NN>"> holding reveal's markdown section; src/lib/live/now.ts
+// clones the current one into `.slides` and re-inits reveal on each segment change.
+// `[data-now-idle]` (logo + cursor + RDU tag) shows when the segment has no deck file.
 import Window from './Window.astro';
 import Logo from './Logo.astro';
+import { decks } from '../../lib/live/decks';
 ---
 
 <Window title="NOW" name="now">
@@ -14,6 +17,18 @@ import Logo from './Logo.astro';
 				<div class="now-idle-logo"><Logo /></div>
 				<div class="now-idle-tag">RALEIGH · DURHAM · CHAPEL HILL <i></i></div>
 			</div>
+			<div class="reveal" data-now-reveal hidden>
+				<div class="slides"></div>
+			</div>
+			{
+				Object.entries(decks).map(([key, md]) => (
+					<template data-deck={key}>
+						<section data-markdown>
+							<textarea data-template set:text={md} />
+						</section>
+					</template>
+				))
+			}
 		</div>
 	</div>
 </Window>
