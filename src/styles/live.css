@@ -308,6 +308,10 @@ body {
 	color: var(--paper);
 	background: #000;
 }
+.now-deck .reveal .slide-number {
+	font-family: var(--mono);
+	background: none;
+}
 .now-deck .reveal[hidden] {
 	display: none;
 }

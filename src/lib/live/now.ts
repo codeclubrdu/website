@@ -12,16 +12,27 @@ import 'reveal.js/reveal.css';
 import { deckKey } from './decks';
 import { LIVE_TICK } from './tick';
 
+// Only deck navigation: the full reveal keymap (f fullscreen, b blackout, Esc/o overview,
+// ? help, g jump) would hijack the dashboard.
+const NAV_KEYS = new Set([
+	'ArrowRight',
+	'ArrowLeft',
+	'ArrowDown',
+	'ArrowUp',
+	' ',
+	'PageDown',
+	'PageUp',
+]);
+
 const OPTIONS: RevealConfig = {
 	embedded: true,
-	keyboard: true,
+	keyboardCondition: (e) => NAV_KEYS.has(e.key),
 	hash: false,
 	respondToHashChanges: false,
 	controls: false,
 	progress: false,
 	touch: false,
-	autoSlide: 0,
-	loop: false,
+	slideNumber: 'c/t',
 	transition: 'fade',
 	backgroundTransition: 'none',
 	width: 960,
