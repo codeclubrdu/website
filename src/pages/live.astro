@@ -239,6 +239,8 @@ import Brand from '../components/live/Brand.astro';
 			setClock(timeIn.value, Number(speedIn.value));
 			showTag();
 			tick();
+			// Enter in an <input> keeps focus there; reveal ignores nav keys while an input is focused.
+			if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
 		});
 		form.querySelector('[data-real]')!.addEventListener('click', () => {
 			picked = selectSchedule(all, todayISO, null);
