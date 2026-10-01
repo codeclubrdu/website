@@ -63,9 +63,8 @@ export const events: Event[] = [
 				'Clone the Battleship repo before the event — hop in the Discord if you need help getting set up.',
 			],
 			agenda: [
-				{ start: '17:30', end: '17:50', item: 'Social + pizza' },
-				{ start: '17:50', end: '17:55', item: 'Cool tech presentation' },
-				{ start: '17:55', end: '18:00', item: 'Welcome and goal setting' },
+				{ start: '17:30', end: '17:55', item: 'Social + pizza + cool tech presentation' },
+				{ start: '17:55', end: '18:00', item: 'Welcome and goal checking' },
 				{ start: '18:00', end: '18:45', item: 'Projects breakout' },
 				{ start: '18:45', end: '19:00', item: 'Wrap up' },
 			],
