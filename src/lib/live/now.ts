@@ -1,4 +1,4 @@
-// AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md
+// AI-coded (Claude) under the owner's /live exemption — see CONTRIBUTING.md
 //
 // Client-only: mounts the NOW deck. Listens to `live:tick`; on `segmentChanged` it destroys the
 // running reveal instance and inits a fresh one for `<date>/<NN>`, or shows the idle logo when

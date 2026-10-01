@@ -1,13 +1,12 @@
-// AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md
+// AI-coded (Claude) under the owner's /live exemption — see CONTRIBUTING.md
 //
 // Client-only: owns the TICKER strip. Listens to `live:tick` (no interval of its own).
-// On schedule change it builds one "run" (every agenda item + the call to action), measures it
-// once fonts are ready, then tiles enough copies to cover the strip plus one run so a CSS
+// On schedule change it clones that schedule's build-time run (Ticker.astro <template>), measures
+// it once fonts are ready, then tiles enough copies to cover the strip plus one run so a CSS
 // `translateX(0 → -run)` loop is seamless. On `segmentChanged` it re-tags the current segment
 // in every copy. Under prefers-reduced-motion (unless `?motion=1`) the CSS animation is off,
 // so the track pages one strip-width every 8s instead.
 
-import { hm } from './format';
 import type { LiveSchedule } from './schedule';
 import { LIVE_TICK, type LiveTick } from './tick';
 
@@ -39,20 +38,12 @@ export const mountTicker = (): void => {
 		track.style.removeProperty('--ticker-run');
 		track.style.removeProperty('transform');
 		runWidth = 0;
-		if (!schedule) return;
+		const tpl = schedule
+			? document.querySelector<HTMLTemplateElement>(`[data-ticker-run="${schedule.date}"]`)
+			: null;
+		if (!tpl) return;
 
-		const run = document.createElement('span');
-		run.className = 'ticker-run';
-		schedule.agenda.forEach((seg, i) => {
-			const item = document.createElement('span');
-			item.dataset.index = String(i);
-			item.textContent = `${hm(seg.start)} ${seg.item}`;
-			run.append(item);
-		});
-		const cta = document.createElement('span');
-		cta.className = 'ticker-cta';
-		cta.textContent = schedule.callToAction;
-		run.append(cta);
+		const run = tpl.content.firstElementChild!.cloneNode(true) as HTMLElement;
 		track.append(run);
 
 		// Silkscreen decides the width; measure after it loads. offsetWidth ignores the canvas scale.

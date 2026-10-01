@@ -1,10 +1,25 @@
 ---
-// AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md
-// Markup only. live.astro fills <ol data-agenda> once per schedule pick and sets
-// data-state="done|now|next|later" on each <li> every tick.
+// AI-coded (Claude) under the owner's /live exemption — see CONTRIBUTING.md
+// Rows are rendered here at build time, one <template> per schedule. live.astro clones the
+// picked schedule's rows into <ol data-agenda> and sets data-state="done|now|next|later"
+// on each <li> as segments change.
 import Window from './Window.astro';
+import { schedules } from '../../lib/live/schedule';
+import { hm } from '../../lib/live/format';
 ---
 
 <Window title="AGENDA" name="agenda">
 	<ol class="agenda" data-agenda></ol>
+	{
+		schedules.map((s) => (
+			<template data-agenda-rows={s.date}>
+				{s.agenda.map((seg) => (
+					<li>
+						<time>{hm(seg.start)}</time>
+						<span>{seg.item}</span>
+					</li>
+				))}
+			</template>
+		))
+	}
 </Window>

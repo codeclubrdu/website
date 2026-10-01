@@ -1,4 +1,4 @@
-// AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md
+// AI-coded (Claude) under the owner's /live exemption — see CONTRIBUTING.md
 //
 // Pure viewer-copy helpers for /live. No DOM.
 

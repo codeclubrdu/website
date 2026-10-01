@@ -1,4 +1,4 @@
-// AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md
+// AI-coded (Claude) under the owner's /live exemption — see CONTRIBUTING.md
 //
 // Build-time index of NOW decks. `src/data/live/<date>/<NN>.md` (NN = 00-based agenda
 // index) is read raw and keyed `<date>/<NN>`. Missing key → Now.astro shows the idle logo.

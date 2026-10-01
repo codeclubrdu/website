@@ -1,5 +1,5 @@
 ---
-// AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md
+// AI-coded (Claude) under the owner's /live exemption — see CONTRIBUTING.md
 // The page: embeds every schedule as JSON, runs the one 1s interval, dispatches `live:tick`,
 // and fills the six windows + overlay from that tick. Components are markup-only.
 import Live from '../layouts/live.astro';
@@ -115,21 +115,14 @@ import Brand from '../components/live/Brand.astro';
 	const agendaList = q<HTMLOListElement>('[data-agenda]');
 	const overlay = q('[data-overlay]');
 
-	/** Rebuild the per-schedule markup (agenda rows). Runs on schedule change only. */
+	/** Swap in the picked schedule's build-time agenda rows. Runs on schedule change only. */
 	const buildSchedule = (schedule: LiveSchedule | null): void => {
-		agendaList.replaceChildren();
 		text('[data-brand-event]', schedule?.event.toUpperCase() ?? '');
 		text('[data-brand-place]', schedule?.place.toUpperCase() ?? '');
-		if (!schedule) return;
-		for (const seg of schedule.agenda) {
-			const li = document.createElement('li');
-			const t = document.createElement('time');
-			t.textContent = hm(seg.start);
-			const item = document.createElement('span');
-			item.textContent = seg.item;
-			li.append(t, item);
-			agendaList.append(li);
-		}
+		const rows = schedule
+			? document.querySelector<HTMLTemplateElement>(`[data-agenda-rows="${schedule.date}"]`)
+			: null;
+		agendaList.replaceChildren(rows ? rows.content.cloneNode(true) : '');
 	};
 
 	const showOverlay = (phase: string, title: string, main: string, sub: string): void => {

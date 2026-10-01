@@ -1,10 +1,27 @@
 ---
-// AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md
-// Bottom strip. `src/lib/live/ticker.ts` builds the duplicated run into [data-ticker-track]
-// on schedule pick, tags the current segment data-state="now", and handles the
+// AI-coded (Claude) under the owner's /live exemption — see CONTRIBUTING.md
+// Bottom strip. One run (agenda + CTA) per schedule is rendered here as a <template>.
+// `src/lib/live/ticker.ts` clones the picked schedule's run into [data-ticker-track], tiles
+// copies for a seamless loop, tags the current segment data-state="now", and handles the
 // reduced-motion paging fallback. The fixed AGENDA tab is `.ticker::before`.
+import { schedules } from '../../lib/live/schedule';
+import { hm } from '../../lib/live/format';
 ---
 
 <div class="ticker" data-window="ticker" style="grid-area: ticker">
 	<div class="ticker-track" data-ticker-track></div>
+	{
+		schedules.map((s) => (
+			<template data-ticker-run={s.date}>
+				<span class="ticker-run">
+					{s.agenda.map((seg, i) => (
+						<span data-index={i}>
+							{hm(seg.start)} {seg.item}
+						</span>
+					))}
+					<span class="ticker-cta">{s.callToAction}</span>
+				</span>
+			</template>
+		))
+	}
 </div>

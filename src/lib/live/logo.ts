@@ -1,4 +1,4 @@
-// AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md
+// AI-coded (Claude) under the owner's /live exemption — see CONTRIBUTING.md
 //
 // Code Club RDU ASCII logo (114 cols × 10 rows, verbatim from the seventh-event slides).
 // Rendered in a <pre data-ascii>; the live layout scales it to its box on fonts.ready.

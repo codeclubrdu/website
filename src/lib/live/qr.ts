@@ -1,4 +1,4 @@
-// AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md
+// AI-coded (Claude) under the owner's /live exemption — see CONTRIBUTING.md
 //
 // Build-time QR: the Discord invite as an inline SVG string (uqr, no runtime dep, no CDN).
 // Monochrome to match the chrome; the paper frame comes from the host element's CSS.

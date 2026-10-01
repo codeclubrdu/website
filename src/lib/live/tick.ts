@@ -1,4 +1,4 @@
-// AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md
+// AI-coded (Claude) under the owner's /live exemption — see CONTRIBUTING.md
 //
 // `live:tick` contract. live.astro dispatches one CustomEvent<LiveTick> on `document`
 // every second (and immediately after the dev panel changes the clock). Anything that
