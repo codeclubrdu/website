@@ -233,11 +233,9 @@ Each session starts with: read this doc, `git log --oneline -15`, and the files 
 
 ## Glue list (Jordan hand-writes; sessions leave `TODO(jordan)`)
 
-Final as of S6. Every item below has a matching `TODO(jordan)` marker in the file (`grep -rn 'TODO(jordan)' src`).
+Final as of S6; all `TODO(jordan)` markers in `src` have since been resolved (decks, restroom note, Discord invite). Remaining items are pure data entry:
 
 - Deck content: `src/data/live/2026-10-01/01.md` … `04.md` (reveal markdown, `---` between slides). No `00.md` on purpose: Social + pizza shows the idle ASCII logo (missing deck → idle).
-- Floor/bathroom note text: `src/components/live/Utility.astro` ("HERE" line, currently "Restrooms: ask a host")
-- Discord invite in `src/data/links.ts`: confirm non-expiring (it is the QR on INFO + the after overlay)
 - Event 9 entry in `src/data/events.ts` when known (drives "NEXT" in INFO and the after overlay)
 - Any gif/asset under `public/live/` (none required; fonts are already there)
 - TV/AirPlay setup + deployment (Jordan owns deploy; not in scope here)
