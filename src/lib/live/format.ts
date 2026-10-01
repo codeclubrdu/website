@@ -43,10 +43,6 @@ export const mss = (ms: number): string => {
 export const dayLabel = (s: LiveSchedule): string =>
 	`${s.event} · ${dayFmt.format(localMs(s.date, s.agenda[0].start))}, ${hm(s.agenda[0].start)}pm`;
 
-/** Next schedule strictly after `date`, by date. */
-export const nextAfter = (all: LiveSchedule[], date: string): LiveSchedule | undefined =>
-	all.filter((x) => x.date > date).sort((a, b) => a.date.localeCompare(b.date))[0];
-
 /** ms → 'tomorrow' | 'in N days' (day granularity for idle waits) */
 export const daysUntil = (ms: number): string => {
 	const days = Math.round(ms / 86_400_000);

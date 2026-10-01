@@ -9,9 +9,6 @@ export type LiveSchedule = {
 	event: string;
 	/** ISO date, YYYY-MM-DD */
 	date: string;
-	/** Event window, 24h 'HH:MM' local. Parsed from `Event.time`. */
-	windowStart: string;
-	windowEnd: string;
 	/** Venue line shown while waiting, e.g. '150 Fayetteville - 13th Floor'. */
 	place: string;
 	agenda: Agenda[];
@@ -52,6 +49,8 @@ const parseWindow = (time: string, where: string): [string, string] => {
 
 export const buildSchedule = (e: Event): LiveSchedule => {
 	const where = `${e.event} (${e.date})`;
+	if (!/^\d{4}-\d{2}-\d{2}$/.test(e.date))
+		throw new Error(`[live] ${where}: bad date '${e.date}', want YYYY-MM-DD`);
 	const [windowStart, windowEnd] = parseWindow(e.time, where);
 	const wStart = toMinutes(windowStart, where);
 	const wEnd = toMinutes(windowEnd, where);
@@ -75,8 +74,6 @@ export const buildSchedule = (e: Event): LiveSchedule => {
 	return {
 		event: e.event,
 		date: e.date,
-		windowStart,
-		windowEnd,
 		place: e.place,
 		agenda,
 		callToAction: e.details.callToAction,
@@ -92,6 +89,10 @@ export const localMs = (date: string, hhmm: string): number => {
 	const [h, mi] = hhmm.split(':').map(Number);
 	return new Date(y, mo - 1, d, h, mi).getTime();
 };
+
+/** Next schedule strictly after `date`, by date. */
+export const nextAfter = (all: LiveSchedule[], date: string): LiveSchedule | undefined =>
+	all.filter((x) => x.date > date).sort((a, b) => a.date.localeCompare(b.date))[0];
 
 /**
  * Pick which event /live shows.
@@ -109,13 +110,15 @@ export const selectSchedule = (
 	}
 	const today = all.find((x) => x.date === todayISO);
 	if (today) return { schedule: today, eventDay: true };
-	const upcoming = all
-		.filter((x) => x.date > todayISO)
-		.sort((a, b) => a.date.localeCompare(b.date));
-	return upcoming[0] ? { schedule: upcoming[0], eventDay: false } : null;
+	const upcoming = nextAfter(all, todayISO);
+	return upcoming ? { schedule: upcoming, eventDay: false } : null;
 };
 
-export const computeState = (schedule: LiveSchedule, nowMs: number, eventDay = true): LiveState => {
+export const computeState = (
+	schedule: LiveSchedule,
+	nowMs: number,
+	eventDay: boolean,
+): LiveState => {
 	const { date, agenda } = schedule;
 	const firstStart = localMs(date, agenda[0].start);
 	const finalEnd = localMs(date, agenda[agenda.length - 1].end);

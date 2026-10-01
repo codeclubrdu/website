@@ -24,4 +24,4 @@ pnpm-debug.log*
 .idea/
 
 # local design notes / mockups
-docs/
+/docs/

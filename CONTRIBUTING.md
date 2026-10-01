@@ -46,4 +46,4 @@ This project does not accept contributions generated wholly or in part by AI/LLM
 
 **Enforcement.** PRs suspected of being AI-generated will be closed without detailed review. Repeated violations get you blocked from the repo. If you're unsure whether something crosses the line, just ask.
 
-**Exemption: `/live`.** The in-meeting dashboard at `/live` (`src/pages/live.astro`, `src/layouts/live.astro`, `src/components/live/`, `src/lib/live/`, `src/styles/live.css`, `src/data/live/`) is AI-coded with the owner's explicit sign-off. Every file there carries an `AI-coded (Claude)` header. This exemption covers only those paths and does not extend to the rest of the repo.
+**Exemption: `/live`.** The in-meeting dashboard at `/live` (`src/pages/live.astro`, `src/layouts/live.astro`, `src/components/live/`, `src/lib/live/`, `src/styles/live.css`, `src/data/live/`, `src/data/links.ts`) is AI-coded with the owner's explicit sign-off. Every file there carries an `AI-coded (Claude)` header. This exemption covers only those paths and does not extend to the rest of the repo.

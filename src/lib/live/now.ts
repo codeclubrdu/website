@@ -8,7 +8,7 @@ import Reveal, { type RevealApi, type RevealConfig } from 'reveal.js';
 import Markdown from 'reveal.js/plugin/markdown';
 import 'reveal.js/reveal.css';
 import { deckKey } from './decks';
-import { LIVE_TICK, type LiveTick } from './tick';
+import { LIVE_TICK } from './tick';
 
 const OPTIONS: RevealConfig = {
 	embedded: true,
@@ -32,12 +32,10 @@ const OPTIONS: RevealConfig = {
 export const mountNow = (): void => {
 	const host = document.querySelector<HTMLElement>('[data-now-deck]');
 	if (!host) return;
-	const idle = host.querySelector<HTMLElement>('[data-now-idle]')!;
 	const el = host.querySelector<HTMLElement>('[data-now-reveal]')!;
 	const slides = el.querySelector<HTMLElement>('.slides')!;
 
 	let deck: RevealApi | null = null;
-	let shownKey: string | null = null;
 
 	const teardown = (): void => {
 		deck?.destroy();
@@ -45,31 +43,24 @@ export const mountNow = (): void => {
 		slides.replaceChildren();
 		el.hidden = true;
 		host.dataset.hasDeck = '';
-		idle.hidden = false;
-		shownKey = null;
 	};
 
 	const show = (key: string): void => {
 		const tpl = host.querySelector<HTMLTemplateElement>(`template[data-deck="${key}"]`);
-		if (!tpl) {
-			if (shownKey !== null) teardown();
-			return;
-		}
 		teardown();
+		if (!tpl) return;
 		slides.append(tpl.content.cloneNode(true));
 		el.hidden = false;
 		host.dataset.hasDeck = 'true';
-		idle.hidden = true;
-		shownKey = key;
 		deck = new Reveal(el, { ...OPTIONS, plugins: [Markdown] });
 		void deck.initialize();
 	};
 
 	document.addEventListener(LIVE_TICK, (e) => {
-		const { schedule, state, segmentChanged } = e.detail as LiveTick;
+		const { schedule, state, segmentChanged } = e.detail;
 		if (!segmentChanged) return;
 		if (!schedule || !state || state.phase !== 'during' || state.segmentIndex === null) {
-			if (shownKey !== null) teardown();
+			teardown();
 			return;
 		}
 		show(deckKey(schedule.date, state.segmentIndex));

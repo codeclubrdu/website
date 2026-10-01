@@ -43,7 +43,7 @@ const format12h = (hhmm: string): string => {
 	return `${((h + 11) % 12) + 1}:${String(m).padStart(2, '0')}`;
 };
 
-/** '17:30','17:50' → '5:30–5:50' (the display string events.astro always rendered). */
+/** '17:30','17:50' → '5:30–5:50' */
 export const formatRange = (start: string, end: string): string =>
 	`${format12h(start)}–${format12h(end)}`;
 

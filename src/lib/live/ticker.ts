@@ -8,7 +8,7 @@
 // so the track pages one strip-width every 8s instead.
 
 import type { LiveSchedule } from './schedule';
-import { LIVE_TICK, type LiveTick } from './tick';
+import { LIVE_TICK } from './tick';
 
 const PAGE_MS = 8000;
 
@@ -19,7 +19,8 @@ const reducedMotion = (): boolean =>
 export const mountTicker = (): void => {
 	const track = document.querySelector<HTMLElement>('[data-ticker-track]');
 	if (!track) return;
-	const strip = track.parentElement!;
+	const strip = track.parentElement;
+	if (!strip) return;
 
 	let builtFor: string | null = null;
 	let runWidth = 0;
@@ -43,13 +44,15 @@ export const mountTicker = (): void => {
 			: null;
 		if (!tpl) return;
 
-		const run = tpl.content.firstElementChild!.cloneNode(true) as HTMLElement;
-		track.append(run);
+		track.append(tpl.content.cloneNode(true));
+		const run = track.firstElementChild;
+		if (!(run instanceof HTMLElement)) return;
 
 		// Silkscreen decides the width; measure after it loads. offsetWidth ignores the canvas scale.
 		void document.fonts.ready.then(() => {
 			if (track.firstElementChild !== run) return; // schedule changed meanwhile
 			runWidth = run.offsetWidth;
+			if (!runWidth) return; // not laid out; never tile from a zero width
 			const copies = Math.max(2, Math.ceil(strip.clientWidth / runWidth) + 1);
 			for (let k = 1; k < copies; k++) track.append(run.cloneNode(true));
 			track.style.setProperty('--ticker-run', `${runWidth}px`);
@@ -71,7 +74,7 @@ export const mountTicker = (): void => {
 	};
 
 	document.addEventListener(LIVE_TICK, (e) => {
-		const { schedule, state, segmentChanged } = e.detail as LiveTick;
+		const { schedule, state, segmentChanged } = e.detail;
 		const dateKey = schedule?.date ?? null;
 		if (dateKey !== builtFor) {
 			build(schedule);
