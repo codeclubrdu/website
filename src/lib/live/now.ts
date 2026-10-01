@@ -3,6 +3,8 @@
 // Client-only: mounts the NOW deck. Listens to `live:tick`; on `segmentChanged` it destroys the
 // running reveal instance and inits a fresh one for `<date>/<NN>`, or shows the idle logo when
 // no deck exists. Import this from a <script> only — reveal touches `document` on import.
+//
+// Slides are presenter-driven (arrow keys / space); only the segment switch is clock-driven.
 
 import Reveal, { type RevealApi, type RevealConfig } from 'reveal.js';
 import Markdown from 'reveal.js/plugin/markdown';
@@ -12,15 +14,14 @@ import { LIVE_TICK } from './tick';
 
 const OPTIONS: RevealConfig = {
 	embedded: true,
-	keyboard: false,
+	keyboard: true,
 	hash: false,
 	respondToHashChanges: false,
 	controls: false,
 	progress: false,
 	touch: false,
-	autoSlide: 8000,
-	loop: true,
-	autoSlideStoppable: false,
+	autoSlide: 0,
+	loop: false,
 	transition: 'fade',
 	backgroundTransition: 'none',
 	width: 960,
