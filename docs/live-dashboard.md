@@ -1,3 +1,5 @@
+<!-- AI-coded (Claude) under the owner's /live exemption — see docs/live-dashboard.md -->
+
 # `/live` — in-meeting dashboard
 
 Spec + build plan. Read this first in every session that touches `/live`.
@@ -99,7 +101,7 @@ Window titlebars w/ fake buttons, bevel borders, starfield background (CSS or a 
 
 ### Dependencies (install all in S1 so parallel sessions never touch the lockfile)
 
-`reveal.js`, `@types/reveal.js`, `uqr` (dev, build-time QR).
+`reveal.js`, `uqr` (dev, build-time QR). (`@types/reveal.js` was installed in S1 and dropped in S6; reveal 6 ships its own types.)
 
 Discord invite URL hoisted to `src/data/links.ts` and shared with `Header.astro`. **OPEN:** confirm invite is non-expiring.
 
@@ -116,6 +118,11 @@ src/lib/live/qr.ts              # build-time SVG via uqr
 src/components/live/Window.astro   # titlebar/bevel shell
 src/components/live/Brand.astro    # top brand bar (S3)
 src/lib/live/logo.ts            # ASCII logo string (S3)
+src/lib/live/tick.ts            # live:tick contract (S2)
+src/lib/live/format.ts          # pure display helpers (S2)
+src/lib/live/now.ts             # client: reveal mount/destroy per segment (S4)
+src/lib/live/ticker.ts          # client: ticker build/tile/page (S5)
+src/components/live/Logo.astro  # ASCII logo <pre> (S3)
 src/components/live/{Agenda,Now,UpNext,Clock,Utility,Ticker,Overlay}.astro
 src/styles/live.css             # y2k chrome, imported by live layout only
 src/data/live/<date>/NN.md      # decks (glue)
@@ -214,14 +221,25 @@ ASCII logo (from seventh-event slides, 114 cols × 10 rows, keep verbatim):
 
 **S6 (~70k) — integrate + rehearse + hand off.** Merge S3–S5, fix seams, full rehearsal `/live?date=2026-10-01&now=17:25&speed=60` before → 5 segments → after, no console errors, single interval confirmed; audit AI headers on every file; finalize glue list; `format:check && lint && typecheck && build`; draft PR w/ exemption note.
 
+**S6 — DONE 2026-10-01 on `jordan/live-dashboard`.** S3–S5 were already on this branch (no sub-branches to merge); no seams needed fixing.
+
+- Full rehearsal `/live?date=2026-10-01&now=17:25&speed=60` on the production build (`pnpm preview`) in headless Chrome 1920×1080, driven over CDP: `before` → all 5 segments → `after`, flips at 5:30 / 5:50 / 5:55 / 6:00 / 6:45 / 7:00 exactly; AGENDA states, UP NEXT ("THEN · 7:00 That's a wrap" on the last segment), CLOCK, deck swap (placeholder deck per segment), ticker ▶ NOW tag (in both copies), overlay QR hidden in `before` / shown in `after`, after-overrun chip blinking. Zero console errors / warnings / exceptions. All three font families loaded.
+- Intervals: `/live` owns exactly one. reveal.js adds one per `initialize()` (its scroll-prevention guard, `setupScrollPrevention` in `reveal.js`) and never clears it in `destroy()` — upstream leak, ~6 per event, each just re-zeroes the same wrapper's `scrollTop`. Harmless; not worth deviating from destroy/re-init.
+- AI header present on every file in the exemption paths (incl. this doc). `@types/reveal.js` dropped (reveal 6 ships types). `format:check`, `lint`, `typecheck`, `build` green.
+- Event 8 is the last event in `events.ts`, so INFO shows "NEXT TBA" and the after overlay says "See you next time". Adding Event 9 to `events.ts` fixes both automatically.
+- Headless-Chrome screenshots of each phase were reviewed; nothing to fix. `--headless=new` + `Page.captureScreenshot` is enough; CSS animations do run there in real time.
+
 Each session starts with: read this doc, `git log --oneline -15`, and the files named for that session. Nothing else needs carrying over.
 
 ## Glue list (Jordan hand-writes; sessions leave `TODO(jordan)`)
 
-- Deck content: `src/data/live/2026-10-01/00–04.md`
-- Floor/bathroom note text in `Utility.astro`
-- Discord invite constant value in `links.ts` (+ confirm non-expiring)
-- Any gif/asset under `public/live/`
+Final as of S6. Every item below has a matching `TODO(jordan)` marker in the file (`grep -rn 'TODO(jordan)' src`).
+
+- Deck content: `src/data/live/2026-10-01/00.md` … `04.md` (reveal markdown, `---` between slides; each currently says PLACEHOLDER)
+- Floor/bathroom note text: `src/components/live/Utility.astro` ("HERE" line, currently "Restrooms: ask a host")
+- Discord invite in `src/data/links.ts`: confirm non-expiring (it is the QR on INFO + the after overlay)
+- Event 9 entry in `src/data/events.ts` when known (drives "NEXT" in INFO and the after overlay)
+- Any gif/asset under `public/live/` (none required; fonts are already there)
 - TV/AirPlay setup + deployment (Jordan owns deploy; not in scope here)
 
 ## Rehearsal checklist (pre-event)
