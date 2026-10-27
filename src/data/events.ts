@@ -49,6 +49,42 @@ export const formatRange = (start: string, end: string): string =>
 
 export const events: Event[] = [
 	{
+		event: 'Event 9',
+		date: '2026-11-05',
+		time: '5:30p-7:00p',
+		place: '150 Fayetteville - 13th Floor',
+		address: '150 Fayetteville St Floor 13',
+		city: 'Raleigh, NC',
+		meetupLink: '',
+		details: {
+			notes: [
+				'Planning round: what we build and do next, with a reorient toward craft — how we do our jobs.',
+				'We are meeting on the 13th floor, not the 4th.',
+			],
+			agenda: [
+				{ start: '17:30', end: '17:50', item: 'Social + pizza' },
+				{ start: '17:50', end: '17:55', item: 'Welcome + goal setting' },
+				{
+					start: '17:55',
+					end: '18:15',
+					item: 'Tech Share & Tell — Matt S. on building his grocery list app',
+				},
+				{
+					start: '18:15',
+					end: '18:45',
+					item: 'Planning discussion — what we build/do together next, craft focus',
+				},
+				{
+					start: '18:45',
+					end: '18:55',
+					item: 'Roles + volunteering — who owns what going forward',
+				},
+				{ start: '18:55', end: '19:00', item: 'Wrap + photo' },
+			],
+			callToAction: 'Want to share something cool as a talk or own a piece of Code Club? DM me!',
+		},
+	},
+	{
 		event: 'Event 8',
 		date: '2026-10-01',
 		time: '5:30p-7:00p',
@@ -70,6 +106,13 @@ export const events: Event[] = [
 			],
 			callToAction: 'Want to share something cool as a talk or lead a project? DM me!',
 		},
+		recap: [
+			`Code Club RDU Event 8 - We had 12 folks show up on the 13th floor, 7 first-timers and 5 returning. Welcome to everyone new, y'all brought a lot of energy.`,
+			`Anthony kicked off the event with a sick Share & Tell talking about the Open Social Web. Let's keep the convo going in the Discord (https://discord.gg/h22edSxZdK). I know I'd like to explore moving our Discord convos somewhere less walled off.`,
+			`Goal setting had the same answer as always and I love it: y'all are here to talk shop and meet other people who like this stuff. Fun twist this time, a good chunk of the room was ops and platform folks who just wanted to nerd out in general. I smell some ops workshops on the horizon!`,
+			`Honest take on battleship: we kind of started over for the third time. That one's on me and the format. Going forward we're going to keep coding exercises way tighter and when we build across sessions everyone moves to the next step together. More on that soon.`,
+			`Thanks for coming out. Feedback welcome, DM me or drop it in Discord.`,
+		],
 	},
 	{
 		event: 'Event 7',
