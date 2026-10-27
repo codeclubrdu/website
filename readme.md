@@ -4,7 +4,7 @@ Built with [Astro](https://astro.build) and [Tailwind](https://tailwindcss.com).
 
 ## Prerequisites
 
-- Node.js `>= 22.12.0`
+- Node.js `>= 24.22.1`
 - pnpm (via `corepack enable` or [pnpm.io](https://pnpm.io/installation))
 
 ## Run locally
