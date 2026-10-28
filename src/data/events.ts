@@ -52,14 +52,14 @@ export const events: Event[] = [
 		event: 'Event 9',
 		date: '2026-11-05',
 		time: '5:30p-7:00p',
-		place: '150 Fayetteville - 13th Floor',
-		address: '150 Fayetteville St Floor 13',
+		place: 'Atomic Object - 150 Fayetteville, 4th Floor',
+		address: '150 Fayetteville St Floor 4',
 		city: 'Raleigh, NC',
 		meetupLink: '',
 		details: {
 			notes: [
 				'Planning round: what we build and do next, with a reorient toward craft — how we do our jobs.',
-				'We are meeting on the 13th floor, not the 4th.',
+				'Back at Atomic Object on the 4th floor this time, not the 13th — the 13th floor room was already booked.',
 			],
 			agenda: [
 				{ start: '17:30', end: '17:50', item: 'Social + pizza' },
