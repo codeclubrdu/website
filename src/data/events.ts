@@ -97,6 +97,11 @@ export const events: Event[] = [
 			],
 			callToAction: 'Want to share something cool as a talk or own a piece of Code Club? DM me!',
 		},
+		recap: [
+			`Code Club RDU Event 9 - 10 folks came and put their heads together to conspire and brainstorm about Code Club RDU's future. 7 folks returned and 3 new comers.`,
+			`We actually ran out of pizza this time! I can't believe it. Matt S shared his impressive grocery list application. We then transitioned into brainstorming ideas for future events and how we can collaborate together. A lot of really great ideas were floated and I still have some digesting to do.`,
+			`Thanks to everyone who came and shared! Really looking forward to it.`,
+		],
 	},
 	{
 		event: 'Event 8',
