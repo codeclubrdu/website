@@ -80,8 +80,13 @@ export const buildSchedule = (e: Event): LiveSchedule => {
 	};
 };
 
-/** All events, validated. Importing this module is the build-time check. */
-export const schedules: LiveSchedule[] = events.map(buildSchedule);
+/**
+ * All events with an agenda, validated. Importing this module is the build-time check.
+ * Events without an agenda yet (announced, not planned) are skipped — /live has nothing to show.
+ */
+export const schedules: LiveSchedule[] = events
+	.filter((e) => e.details.agenda.length > 0)
+	.map(buildSchedule);
 
 /** Local-time ms for 'HH:MM' on the schedule's date (DST-safe: built via Date(y, m, d, h, mm)). */
 export const localMs = (date: string, hhmm: string): number => {
