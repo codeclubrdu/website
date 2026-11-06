@@ -49,6 +49,20 @@ export const formatRange = (start: string, end: string): string =>
 
 export const events: Event[] = [
 	{
+		event: 'Event 10',
+		date: '2026-12-03',
+		time: '5:30p-7:00p',
+		place: 'Atomic Object - 150 Fayetteville, 4th Floor',
+		address: '150 Fayetteville St Floor 4',
+		city: 'Raleigh, NC',
+		meetupLink: 'https://www.meetup.com/code-club-rdu/events/317309244/',
+		details: {
+			notes: [],
+			agenda: [],
+			callToAction: 'Want to share something cool as a talk or own a piece of Code Club? DM me!',
+		},
+	},
+	{
 		event: 'Event 9',
 		date: '2026-11-05',
 		time: '5:30p-7:00p',
